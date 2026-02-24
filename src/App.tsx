@@ -8,6 +8,7 @@ import Inference from './pages/Inference'
 import Compare from './pages/Compare'
 import Paths from './pages/Paths'
 import Glossary from './pages/Glossary'
+import DemoStack from './pages/DemoStack'
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path="fine-tuning" element={<FineTuning />} />
         <Route path="inference" element={<Inference />} />
         <Route path="compare" element={<Compare />} />
+        <Route path="demo-stack" element={<DemoStack />} />
         <Route path="paths" element={<Paths />} />
         <Route path="glossary" element={<Glossary />} />
       </Route>

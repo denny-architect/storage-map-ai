@@ -175,7 +175,6 @@ export default function Glossary() {
     item.definition.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
-  // Group by first letter
   const groupedTerms = filteredTerms.reduce((acc, term) => {
     const letter = term.term[0].toUpperCase()
     if (!acc[letter]) acc[letter] = []
@@ -195,33 +194,48 @@ export default function Glossary() {
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Search */}
-        <div className="mb-8">
+        <div className="mb-10">
           <div className="relative">
             <input
               type="text"
               placeholder="Search terms..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full px-4 py-3 pl-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-raspberry focus:border-raspberry outline-none transition-colors"
+              className="w-full px-5 py-4 pl-14 bg-white border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-raspberry/10 focus:border-raspberry outline-none transition-all text-lg"
             />
-            <svg 
-              className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
-              fill="none" 
-              viewBox="0 0 24 24" 
-              stroke="currentColor"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
+            <div className="absolute left-5 top-1/2 -translate-y-1/2">
+              <svg 
+                className="w-5 h-5 text-gray-400"
+                fill="none" 
+                viewBox="0 0 24 24" 
+                stroke="currentColor"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+            {searchTerm && (
+              <button
+                onClick={() => setSearchTerm('')}
+                className="absolute right-4 top-1/2 -translate-y-1/2 p-1 hover:bg-gray-100 rounded-full transition-colors"
+              >
+                <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            )}
           </div>
+          <p className="mt-3 text-sm text-gray-500 text-center">
+            {filteredTerms.length} term{filteredTerms.length !== 1 ? 's' : ''} {searchTerm ? 'matching your search' : 'in glossary'}
+          </p>
         </div>
 
         {/* Letter Navigation */}
-        <div className="mb-8 flex flex-wrap gap-2">
+        <div className="mb-10 flex flex-wrap justify-center gap-2">
           {sortedLetters.map((letter) => (
             <a
               key={letter}
               href={`#letter-${letter}`}
-              className="w-8 h-8 flex items-center justify-center bg-gray-100 hover:bg-raspberry hover:text-white rounded font-medium text-sm transition-colors"
+              className="w-10 h-10 flex items-center justify-center bg-white hover:bg-gradient-to-br hover:from-raspberry hover:to-raspberry-dark hover:text-white border border-gray-200 rounded-xl font-bold text-sm transition-all duration-200 shadow-sm hover:shadow-lg hover:shadow-raspberry/20"
             >
               {letter}
             </a>
@@ -232,30 +246,40 @@ export default function Glossary() {
         <div className="space-y-12">
           {sortedLetters.map((letter) => (
             <div key={letter} id={`letter-${letter}`}>
-              <h2 className="text-2xl font-bold text-raspberry mb-4 pb-2 border-b border-gray-200">
-                {letter}
-              </h2>
-              <div className="space-y-6">
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-12 h-12 bg-gradient-to-br from-raspberry to-raspberry-dark rounded-xl flex items-center justify-center shadow-lg shadow-raspberry/20">
+                  <span className="text-xl font-bold text-white">{letter}</span>
+                </div>
+                <div className="flex-1 h-px bg-gradient-to-r from-raspberry/30 to-transparent" />
+              </div>
+              
+              <div className="space-y-4">
                 {groupedTerms[letter].map((item) => (
-                  <div key={item.term} className="bg-white rounded-xl border border-gray-200 p-6">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">{item.term}</h3>
-                    <p className="text-gray-600 mb-3">{item.definition}</p>
+                  <div 
+                    key={item.term} 
+                    className="bg-white rounded-2xl border border-gray-200 p-6 hover:border-raspberry/30 hover:shadow-lg transition-all duration-300 group"
+                  >
+                    <h3 className="text-lg font-bold text-gray-900 mb-3 group-hover:text-raspberry transition-colors">
+                      {item.term}
+                    </h3>
+                    <p className="text-gray-600 mb-4 leading-relaxed">{item.definition}</p>
                     
                     {item.context && (
-                      <div className="bg-gray-50 rounded-lg p-3 mb-3">
+                      <div className="bg-gradient-to-r from-gray-50 to-white rounded-xl p-4 mb-4 border border-gray-100">
                         <p className="text-sm text-gray-700">
-                          <span className="font-medium text-raspberry">Example:</span> {item.context}
+                          <span className="font-semibold text-raspberry">Example:</span> {item.context}
                         </p>
                       </div>
                     )}
                     
                     {item.relatedTerms && item.relatedTerms.length > 0 && (
-                      <div className="flex flex-wrap gap-2">
-                        <span className="text-xs text-gray-500">Related:</span>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="text-xs text-gray-500 font-medium">Related:</span>
                         {item.relatedTerms.map((related) => (
                           <span 
                             key={related}
-                            className="px-2 py-0.5 text-xs bg-gray-100 text-gray-600 rounded"
+                            className="px-3 py-1 text-xs bg-gray-100 hover:bg-raspberry/10 hover:text-raspberry text-gray-600 rounded-full transition-colors cursor-pointer"
+                            onClick={() => setSearchTerm(related)}
                           >
                             {related}
                           </span>
@@ -270,8 +294,19 @@ export default function Glossary() {
         </div>
 
         {filteredTerms.length === 0 && (
-          <div className="text-center py-12 text-gray-500">
-            No terms found matching "{searchTerm}"
+          <div className="text-center py-16">
+            <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-2xl flex items-center justify-center">
+              <svg className="w-8 h-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <p className="text-gray-500 font-medium">No terms found matching "{searchTerm}"</p>
+            <button
+              onClick={() => setSearchTerm('')}
+              className="mt-4 text-raspberry hover:text-raspberry-dark font-medium transition-colors"
+            >
+              Clear search
+            </button>
           </div>
         )}
       </div>

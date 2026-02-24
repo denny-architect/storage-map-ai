@@ -17,38 +17,58 @@ interface PipelineDiagramProps {
 }
 
 const roleColors = {
-  'primary': { bg: 'bg-raspberry', border: 'border-raspberry', text: 'text-raspberry', fill: '#C72C48' },
-  'buffered': { bg: 'bg-amber-500', border: 'border-amber-500', text: 'text-amber-600', fill: '#F59E0B' },
-  'burst': { bg: 'bg-blue-500', border: 'border-blue-500', text: 'text-blue-600', fill: '#3B82F6' },
-  'not-in-path': { bg: 'bg-gray-400', border: 'border-gray-400', text: 'text-gray-500', fill: '#9CA3AF' },
+  'primary': { 
+    bg: 'bg-gradient-to-r from-raspberry to-raspberry-dark', 
+    border: 'border-raspberry', 
+    text: 'text-raspberry', 
+    fill: '#C72C48',
+    light: 'bg-raspberry/10',
+    shadow: 'shadow-raspberry/20'
+  },
+  'buffered': { 
+    bg: 'bg-gradient-to-r from-amber-500 to-orange-500', 
+    border: 'border-amber-500', 
+    text: 'text-amber-600', 
+    fill: '#F59E0B',
+    light: 'bg-amber-500/10',
+    shadow: 'shadow-amber-500/20'
+  },
+  'burst': { 
+    bg: 'bg-gradient-to-r from-blue-500 to-blue-600', 
+    border: 'border-blue-500', 
+    text: 'text-blue-600', 
+    fill: '#3B82F6',
+    light: 'bg-blue-500/10',
+    shadow: 'shadow-blue-500/20'
+  },
+  'not-in-path': { 
+    bg: 'bg-gradient-to-r from-gray-400 to-gray-500', 
+    border: 'border-gray-400', 
+    text: 'text-gray-500', 
+    fill: '#9CA3AF',
+    light: 'bg-gray-400/10',
+    shadow: 'shadow-gray-400/20'
+  },
 }
-
-// Role descriptions for potential future tooltips
-// const roleDescriptions = {
-//   'primary': 'Object storage is the primary data source or destination',
-//   'buffered': 'Data streams through storage with caching/prefetch layers',
-//   'burst': 'Large sequential reads/writes at specific moments',
-//   'not-in-path': 'Storage is not involved in this phase',
-// }
 
 export default function PipelineDiagram({ phases }: PipelineDiagramProps) {
   return (
-    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+    <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
       {/* Legend */}
-      <div className="bg-gray-50 border-b border-gray-200 px-6 py-4">
+      <div className="bg-gradient-to-r from-gray-50 to-white border-b border-gray-200 px-6 py-4">
         <div className="flex flex-wrap items-center gap-6">
-          <span className="text-sm font-medium text-gray-700">Storage Role:</span>
+          <span className="text-sm font-semibold text-gray-700">Storage Role:</span>
           {Object.entries(roleColors).map(([role, colors]) => (
             <div key={role} className="flex items-center gap-2">
               <div className={`w-3 h-3 rounded-full ${colors.bg}`} />
-              <span className="text-sm text-gray-600 capitalize">{role.replace('-', ' ')}</span>
+              <span className="text-sm text-gray-600 capitalize font-medium">{role.replace('-', ' ')}</span>
             </div>
           ))}
         </div>
       </div>
 
       {/* SVG Diagram */}
-      <div className="p-6 overflow-x-auto">
+      <div className="p-6 lg:p-8 overflow-x-auto bg-gradient-to-b from-gray-50/50 to-white">
         <svg 
           viewBox={`0 0 ${phases.length * 220 + 40} 200`} 
           className="min-w-full h-48"
@@ -63,7 +83,6 @@ export default function PipelineDiagram({ phases }: PipelineDiagramProps) {
             const currentRole = phase.role
             const nextRole = phases[index + 1].role
             
-            // Determine arrow thickness based on data flow
             const strokeWidth = currentRole === 'not-in-path' || nextRole === 'not-in-path' ? 2 : 4
             
             return (
@@ -82,13 +101,17 @@ export default function PipelineDiagram({ phases }: PipelineDiagramProps) {
                       fill="#9CA3AF"
                     />
                   </marker>
+                  <linearGradient id={`lineGrad-${index}`} x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stopColor={roleColors[currentRole].fill} stopOpacity="0.4" />
+                    <stop offset="100%" stopColor={roleColors[nextRole].fill} stopOpacity="0.4" />
+                  </linearGradient>
                 </defs>
                 <line
                   x1={x1}
                   y1={y}
                   x2={x2}
                   y2={y}
-                  stroke="#D1D5DB"
+                  stroke={`url(#lineGrad-${index})`}
                   strokeWidth={strokeWidth}
                   markerEnd={`url(#arrowhead-${index})`}
                 />
@@ -103,39 +126,55 @@ export default function PipelineDiagram({ phases }: PipelineDiagramProps) {
             const colors = roleColors[phase.role]
             
             return (
-              <g key={phase.id}>
+              <g key={phase.id} className="transition-transform hover:scale-105" style={{ transformOrigin: `${x + 80}px ${y + 70}px` }}>
+                {/* Shadow */}
+                <rect
+                  x={x + 4}
+                  y={y + 4}
+                  width="160"
+                  height="140"
+                  rx="16"
+                  fill="rgba(0,0,0,0.05)"
+                />
+                
                 {/* Node Rectangle */}
                 <rect
                   x={x}
                   y={y}
                   width="160"
                   height="140"
-                  rx="12"
+                  rx="16"
                   fill="white"
                   stroke={colors.fill}
-                  strokeWidth="3"
+                  strokeWidth="2"
                 />
                 
                 {/* Role Indicator Bar */}
+                <defs>
+                  <linearGradient id={`roleGrad-${phase.id}`} x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stopColor={colors.fill} />
+                    <stop offset="100%" stopColor={colors.fill} stopOpacity="0.7" />
+                  </linearGradient>
+                </defs>
                 <rect
                   x={x}
                   y={y}
                   width="160"
-                  height="8"
-                  rx="4"
-                  fill={colors.fill}
+                  height="10"
+                  rx="8"
+                  fill={`url(#roleGrad-${phase.id})`}
                 />
                 
                 {/* Phase Number */}
                 <circle
-                  cx={x + 24}
-                  cy={y + 30}
-                  r="12"
+                  cx={x + 26}
+                  cy={y + 34}
+                  r="14"
                   fill={colors.fill}
                 />
                 <text
-                  x={x + 24}
-                  y={y + 35}
+                  x={x + 26}
+                  y={y + 39}
                   textAnchor="middle"
                   fill="white"
                   fontSize="12"
@@ -146,32 +185,33 @@ export default function PipelineDiagram({ phases }: PipelineDiagramProps) {
                 
                 {/* Phase Name */}
                 <text
-                  x={x + 44}
-                  y={y + 34}
+                  x={x + 48}
+                  y={y + 38}
                   fill="#1F2937"
                   fontSize="13"
                   fontWeight="600"
                 >
-                  {phase.name.length > 14 ? phase.name.slice(0, 14) + '...' : phase.name}
+                  {phase.name.length > 13 ? phase.name.slice(0, 13) + '...' : phase.name}
                 </text>
                 
                 {/* Role Label */}
                 <text
                   x={x + 80}
-                  y={y + 58}
+                  y={y + 60}
                   textAnchor="middle"
                   fill={colors.fill}
-                  fontSize="10"
-                  fontWeight="500"
+                  fontSize="9"
+                  fontWeight="600"
+                  letterSpacing="0.05em"
                 >
                   {phase.roleLabel}
                 </text>
                 
                 {/* Description (truncated) */}
-                <foreignObject x={x + 8} y={y + 68} width="144" height="60">
+                <foreignObject x={x + 10} y={y + 70} width="140" height="55">
                   <div className="text-xs text-gray-500 leading-tight overflow-hidden">
-                    {phase.description.length > 60 
-                      ? phase.description.slice(0, 60) + '...' 
+                    {phase.description.length > 55 
+                      ? phase.description.slice(0, 55) + '...' 
                       : phase.description}
                   </div>
                 </foreignObject>
@@ -183,25 +223,25 @@ export default function PipelineDiagram({ phases }: PipelineDiagramProps) {
 
       {/* Phase Details */}
       <div className="border-t border-gray-200">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-gray-200">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-gray-100">
           {phases.map((phase, index) => {
             const colors = roleColors[phase.role]
             return (
-              <div key={phase.id} className="p-5">
-                <div className="flex items-center gap-2 mb-3">
-                  <span className={`w-6 h-6 rounded-full ${colors.bg} text-white text-xs font-bold flex items-center justify-center`}>
+              <div key={phase.id} className="p-6 hover:bg-gray-50/50 transition-colors">
+                <div className="flex items-center gap-3 mb-4">
+                  <span className={`w-8 h-8 rounded-xl ${colors.bg} text-white text-sm font-bold flex items-center justify-center shadow-lg ${colors.shadow}`}>
                     {index + 1}
                   </span>
-                  <h4 className="font-semibold text-gray-900">{phase.name}</h4>
+                  <h4 className="font-bold text-gray-900">{phase.name}</h4>
                 </div>
-                <p className="text-sm text-gray-600 mb-3">{phase.details}</p>
+                <p className="text-sm text-gray-600 mb-4 leading-relaxed">{phase.details}</p>
                 
                 {phase.s3Paths && phase.s3Paths.length > 0 && (
-                  <div className="mb-3">
-                    <p className="text-xs font-medium text-gray-500 mb-1">Example S3 Paths:</p>
-                    <div className="space-y-1">
+                  <div className="mb-4">
+                    <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Example S3 Paths</p>
+                    <div className="space-y-1.5">
                       {phase.s3Paths.map((path, i) => (
-                        <code key={i} className="block text-xs bg-gray-100 px-2 py-1 rounded text-gray-700 font-mono">
+                        <code key={i} className="block text-xs bg-gray-900 text-gray-300 px-3 py-2 rounded-lg font-mono overflow-x-auto">
                           {path}
                         </code>
                       ))}
@@ -211,11 +251,11 @@ export default function PipelineDiagram({ phases }: PipelineDiagramProps) {
                 
                 {phase.ioProfile && (
                   <p className="text-xs text-gray-500">
-                    <span className="font-medium">I/O Profile:</span> {phase.ioProfile}
+                    <span className="font-semibold">I/O Profile:</span> {phase.ioProfile}
                   </p>
                 )}
                 
-                <div className={`mt-3 inline-flex items-center px-2 py-1 rounded text-xs font-medium ${colors.bg} text-white`}>
+                <div className={`mt-4 inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-semibold ${colors.bg} text-white shadow-sm ${colors.shadow}`}>
                   {phase.roleLabel}
                 </div>
               </div>
@@ -236,12 +276,26 @@ interface PageHeaderProps {
 
 export function PageHeader({ title, subtitle, description, children }: PageHeaderProps) {
   return (
-    <div className="bg-gradient-to-br from-dark via-gray-900 to-darker text-white py-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <p className="text-raspberry font-medium mb-2">{subtitle}</p>
-        <h1 className="text-4xl sm:text-5xl font-bold tracking-tight mb-4">{title}</h1>
-        <p className="text-xl text-gray-300 max-w-3xl">{description}</p>
-        {children}
+    <div className="relative bg-dark text-white py-20 overflow-hidden">
+      {/* Animated background */}
+      <div className="absolute inset-0 animated-gradient opacity-50" />
+      
+      {/* Decorative elements */}
+      <div className="absolute top-0 right-0 w-96 h-96 bg-raspberry/20 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/4" />
+      <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-500/10 rounded-full blur-[80px] translate-y-1/2 -translate-x-1/4" />
+      
+      {/* Grid overlay */}
+      <div className="absolute inset-0 pattern-grid opacity-30" />
+      
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-3xl">
+          <span className="inline-block px-4 py-2 rounded-full bg-raspberry/20 text-raspberry-light font-semibold text-sm mb-6 border border-raspberry/30">
+            {subtitle}
+          </span>
+          <h1 className="text-4xl sm:text-5xl font-bold tracking-tight mb-6">{title}</h1>
+          <p className="text-xl text-gray-300 leading-relaxed">{description}</p>
+          {children}
+        </div>
       </div>
     </div>
   )
@@ -253,16 +307,19 @@ interface BottomLineProps {
 
 export function BottomLine({ children }: BottomLineProps) {
   return (
-    <div className="bg-raspberry/5 border-2 border-raspberry/20 rounded-xl p-6 mt-8">
-      <div className="flex items-start gap-3">
-        <div className="flex-shrink-0 w-8 h-8 bg-raspberry rounded-lg flex items-center justify-center">
-          <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+    <div className="relative bg-gradient-to-r from-raspberry/5 via-raspberry/10 to-raspberry/5 border-2 border-raspberry/20 rounded-2xl p-8 mt-12 overflow-hidden">
+      {/* Decorative gradient */}
+      <div className="absolute top-0 right-0 w-32 h-32 bg-raspberry/10 rounded-full blur-2xl" />
+      
+      <div className="relative flex items-start gap-4">
+        <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-raspberry to-raspberry-dark rounded-xl flex items-center justify-center shadow-lg shadow-raspberry/30">
+          <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
           </svg>
         </div>
         <div>
-          <h3 className="font-semibold text-raspberry mb-1">Bottom Line</h3>
-          <p className="text-gray-700">{children}</p>
+          <h3 className="font-bold text-raspberry text-lg mb-2">The Bottom Line</h3>
+          <p className="text-gray-700 leading-relaxed">{children}</p>
         </div>
       </div>
     </div>

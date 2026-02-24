@@ -59,18 +59,48 @@ const comparisonData: ComparisonData = {
 }
 
 const roleConfig = {
-  'primary': { bg: 'bg-raspberry', hoverBg: 'hover:bg-raspberry-dark', text: 'text-white', label: 'Primary' },
-  'buffered': { bg: 'bg-amber-500', hoverBg: 'hover:bg-amber-600', text: 'text-white', label: 'Buffered' },
-  'burst': { bg: 'bg-blue-500', hoverBg: 'hover:bg-blue-600', text: 'text-white', label: 'Burst' },
-  'not-in-path': { bg: 'bg-gray-400', hoverBg: 'hover:bg-gray-500', text: 'text-white', label: 'Not In Path' },
-  'varies': { bg: 'bg-purple-500', hoverBg: 'hover:bg-purple-600', text: 'text-white', label: 'Varies' },
+  'primary': { 
+    bg: 'bg-gradient-to-r from-raspberry to-raspberry-dark', 
+    hoverBg: 'hover:shadow-lg hover:shadow-raspberry/30', 
+    text: 'text-white', 
+    label: 'Primary',
+    dot: 'bg-raspberry'
+  },
+  'buffered': { 
+    bg: 'bg-gradient-to-r from-amber-500 to-orange-500', 
+    hoverBg: 'hover:shadow-lg hover:shadow-amber-500/30', 
+    text: 'text-white', 
+    label: 'Buffered',
+    dot: 'bg-amber-500'
+  },
+  'burst': { 
+    bg: 'bg-gradient-to-r from-blue-500 to-blue-600', 
+    hoverBg: 'hover:shadow-lg hover:shadow-blue-500/30', 
+    text: 'text-white', 
+    label: 'Burst',
+    dot: 'bg-blue-500'
+  },
+  'not-in-path': { 
+    bg: 'bg-gradient-to-r from-gray-400 to-gray-500', 
+    hoverBg: 'hover:shadow-lg hover:shadow-gray-400/30', 
+    text: 'text-white', 
+    label: 'Not In Path',
+    dot: 'bg-gray-400'
+  },
+  'varies': { 
+    bg: 'bg-gradient-to-r from-purple-500 to-purple-600', 
+    hoverBg: 'hover:shadow-lg hover:shadow-purple-500/30', 
+    text: 'text-white', 
+    label: 'Varies',
+    dot: 'bg-purple-500'
+  },
 }
 
 const workloads = [
-  { key: 'training', label: 'Training', path: '/training' },
-  { key: 'rag', label: 'RAG', path: '/rag' },
-  { key: 'fineTuning', label: 'Fine-Tuning', path: '/fine-tuning' },
-  { key: 'inference', label: 'Inference', path: '/inference' },
+  { key: 'training', label: 'Training', path: '/training', color: 'text-raspberry' },
+  { key: 'rag', label: 'RAG', path: '/rag', color: 'text-amber-600' },
+  { key: 'fineTuning', label: 'Fine-Tuning', path: '/fine-tuning', color: 'text-blue-600' },
+  { key: 'inference', label: 'Inference', path: '/inference', color: 'text-emerald-600' },
 ]
 
 export default function Compare() {
@@ -95,13 +125,13 @@ export default function Compare() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Legend */}
         <section className="mb-8">
-          <div className="bg-white rounded-xl border border-gray-200 p-4">
-            <div className="flex flex-wrap items-center gap-4">
-              <span className="text-sm font-medium text-gray-700">Storage Role:</span>
+          <div className="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm">
+            <div className="flex flex-wrap items-center gap-6">
+              <span className="text-sm font-bold text-gray-700">Storage Role:</span>
               {Object.entries(roleConfig).map(([role, config]) => (
                 <div key={role} className="flex items-center gap-2">
-                  <div className={`w-4 h-4 rounded ${config.bg}`} />
-                  <span className="text-sm text-gray-600">{config.label}</span>
+                  <div className={`w-3 h-3 rounded-full ${config.dot}`} />
+                  <span className="text-sm font-medium text-gray-600">{config.label}</span>
                 </div>
               ))}
             </div>
@@ -110,28 +140,31 @@ export default function Compare() {
 
         {/* Comparison Table */}
         <section className="mb-8">
-          <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+          <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-lg">
             <div className="overflow-x-auto">
               <table className="min-w-full">
                 <thead>
-                  <tr className="bg-gray-50 border-b border-gray-200">
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 w-48">Phase</th>
+                  <tr className="bg-gradient-to-r from-gray-50 to-white border-b border-gray-200">
+                    <th className="px-6 py-5 text-left text-sm font-bold text-gray-900 w-48">Phase</th>
                     {workloads.map((workload) => (
-                      <th key={workload.key} className="px-6 py-4 text-center">
+                      <th key={workload.key} className="px-6 py-5 text-center">
                         <Link 
                           to={workload.path}
-                          className="text-sm font-semibold text-gray-900 hover:text-raspberry transition-colors"
+                          className={`text-sm font-bold ${workload.color} hover:underline transition-colors flex items-center justify-center gap-2`}
                         >
                           {workload.label}
+                          <svg className="w-4 h-4 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                          </svg>
                         </Link>
                       </th>
                     ))}
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-200">
+                <tbody className="divide-y divide-gray-100">
                   {Object.entries(comparisonData).map(([phase, data]) => (
-                    <tr key={phase} className="hover:bg-gray-50 transition-colors">
-                      <td className="px-6 py-4 text-sm font-medium text-gray-900">{phase}</td>
+                    <tr key={phase} className="hover:bg-gray-50/50 transition-colors">
+                      <td className="px-6 py-4 text-sm font-semibold text-gray-900">{phase}</td>
                       {workloads.map((workload) => {
                         const cellData = data[workload.key as keyof typeof data]
                         const config = roleConfig[cellData.role]
@@ -141,8 +174,8 @@ export default function Compare() {
                           <td key={workload.key} className="px-4 py-3">
                             <button
                               onClick={() => setSelectedCell({ phase, workload: workload.key })}
-                              className={`w-full px-3 py-2 rounded-lg text-sm font-medium transition-all ${config.bg} ${config.text} ${config.hoverBg} ${
-                                isSelected ? 'ring-2 ring-offset-2 ring-gray-900' : ''
+                              className={`w-full px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 ${config.bg} ${config.text} ${config.hoverBg} ${
+                                isSelected ? 'ring-2 ring-offset-2 ring-gray-900 scale-105' : ''
                               }`}
                             >
                               {cellData.short}
@@ -159,33 +192,44 @@ export default function Compare() {
         </section>
 
         {/* Selected Cell Detail */}
-        {selectedCell && selectedData && (
-          <section className="mb-8">
-            <div className="bg-white rounded-xl border-2 border-raspberry/20 p-6">
+        {selectedCell && selectedData ? (
+          <section className="mb-8 animate-scale-in">
+            <div className="bg-white rounded-2xl border-2 border-raspberry/30 p-6 shadow-lg shadow-raspberry/10">
               <div className="flex items-start gap-4">
-                <div className={`flex-shrink-0 w-10 h-10 ${roleConfig[selectedData.role].bg} rounded-lg flex items-center justify-center`}>
-                  <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div className={`flex-shrink-0 w-12 h-12 ${roleConfig[selectedData.role].bg} rounded-xl flex items-center justify-center shadow-lg`}>
+                  <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
-                <div>
-                  <h3 className="font-semibold text-gray-900 mb-1">
+                <div className="flex-1">
+                  <h3 className="font-bold text-gray-900 text-lg mb-1">
                     {selectedCell.phase} — {workloads.find(w => w.key === selectedCell.workload)?.label}
                   </h3>
-                  <span className={`inline-block px-2 py-0.5 text-xs font-medium rounded ${roleConfig[selectedData.role].bg} ${roleConfig[selectedData.role].text} mb-2`}>
+                  <span className={`inline-block px-3 py-1 text-xs font-semibold rounded-full ${roleConfig[selectedData.role].bg} ${roleConfig[selectedData.role].text} mb-3`}>
                     {roleConfig[selectedData.role].label}
                   </span>
-                  <p className="text-gray-600">{selectedData.detail}</p>
+                  <p className="text-gray-600 leading-relaxed">{selectedData.detail}</p>
                 </div>
+                <button 
+                  onClick={() => setSelectedCell(null)}
+                  className="flex-shrink-0 p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
               </div>
             </div>
           </section>
-        )}
-
-        {!selectedCell && (
+        ) : (
           <section className="mb-8">
-            <div className="bg-gray-50 rounded-xl border border-gray-200 p-6 text-center">
-              <p className="text-gray-500">Click any cell in the table above to see a detailed explanation.</p>
+            <div className="bg-gray-50 rounded-2xl border border-gray-200 p-8 text-center">
+              <div className="w-12 h-12 mx-auto mb-4 bg-gray-200 rounded-xl flex items-center justify-center">
+                <svg className="w-6 h-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
+                </svg>
+              </div>
+              <p className="text-gray-500 font-medium">Click any cell in the table above to see a detailed explanation.</p>
             </div>
           </section>
         )}
@@ -194,65 +238,64 @@ export default function Compare() {
         <section className="mb-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">Key Takeaways</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-white rounded-xl border border-gray-200 p-6">
-              <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                <div className="w-8 h-8 bg-raspberry rounded-lg flex items-center justify-center">
-                  <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            {[
+              {
+                icon: (
+                  <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                </div>
-                Training: Storage Everywhere
-              </h3>
-              <p className="text-gray-600">
-                From raw data ingestion to checkpointing to final export, object storage is in the critical path 
-                at every stage of model training. Throughput is the key metric.
-              </p>
-            </div>
-
-            <div className="bg-white rounded-xl border border-gray-200 p-6">
-              <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                <div className="w-8 h-8 bg-amber-500 rounded-lg flex items-center justify-center">
-                  <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                ),
+                title: 'Training: Storage Everywhere',
+                description: 'From raw data ingestion to checkpointing to final export, object storage is in the critical path at every stage of model training. Throughput is the key metric.',
+                gradient: 'from-raspberry to-raspberry-dark',
+                shadow: 'shadow-raspberry/20'
+              },
+              {
+                icon: (
+                  <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                </div>
-                RAG: Architecture Matters
-              </h3>
-              <p className="text-gray-600">
-                Storage is always in the ingestion pipeline. Whether it's in the query hot path depends 
-                on your architecture: inline storage, pointer-based retrieval, or caching layer.
-              </p>
-            </div>
-
-            <div className="bg-white rounded-xl border border-gray-200 p-6">
-              <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
-                  <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                ),
+                title: 'RAG: Architecture Matters',
+                description: 'Storage is always in the ingestion pipeline. Whether it\'s in the query hot path depends on your architecture: inline storage, pointer-based retrieval, or caching layer.',
+                gradient: 'from-amber-500 to-orange-500',
+                shadow: 'shadow-amber-500/20'
+              },
+              {
+                icon: (
+                  <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                   </svg>
-                </div>
-                Fine-Tuning: Small Scale, Same Patterns
-              </h3>
-              <p className="text-gray-600">
-                All the same storage patterns as training, but at dramatically smaller scale. 
-                The adapter versioning story is uniquely compelling — same base, many adapters.
-              </p>
-            </div>
-
-            <div className="bg-white rounded-xl border border-gray-200 p-6">
-              <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center">
-                  <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                ),
+                title: 'Fine-Tuning: Small Scale, Same Patterns',
+                description: 'All the same storage patterns as training, but at dramatically smaller scale. The adapter versioning story is uniquely compelling — same base, many adapters.',
+                gradient: 'from-blue-500 to-blue-600',
+                shadow: 'shadow-blue-500/20'
+              },
+              {
+                icon: (
+                  <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
+                ),
+                title: 'Inference: Bookends Only',
+                description: 'Model loading at the start, logging throughout, feedback collection — but NOT during token generation. The forward pass is pure GPU compute. That\'s the honest truth.',
+                gradient: 'from-emerald-500 to-green-500',
+                shadow: 'shadow-emerald-500/20'
+              },
+            ].map((card, index) => (
+              <div key={index} className="bg-white rounded-2xl border border-gray-200 p-6 hover:shadow-lg transition-shadow duration-300">
+                <div className="flex items-start gap-4">
+                  <div className={`w-12 h-12 bg-gradient-to-br ${card.gradient} rounded-xl flex items-center justify-center shadow-lg ${card.shadow}`}>
+                    {card.icon}
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-gray-900 mb-2">{card.title}</h3>
+                    <p className="text-gray-600 text-sm leading-relaxed">{card.description}</p>
+                  </div>
                 </div>
-                Inference: Bookends Only
-              </h3>
-              <p className="text-gray-600">
-                Model loading at the start, logging throughout, feedback collection — but NOT during 
-                token generation. The forward pass is pure GPU compute. That's the honest truth.
-              </p>
-            </div>
+              </div>
+            ))}
           </div>
         </section>
 
