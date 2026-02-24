@@ -281,7 +281,7 @@ export function PageHeader({ title, subtitle, description, children }: PageHeade
       <div className="absolute inset-0 animated-gradient opacity-50" />
       
       {/* Decorative elements */}
-      <div className="absolute top-0 right-0 w-96 h-96 bg-raspberry/20 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/4" />
+      <div className="absolute top-0 right-0 w-96 h-96 bg-raspberry/20 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2" />
       <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-500/10 rounded-full blur-[80px] translate-y-1/2 -translate-x-1/4" />
       
       {/* Grid overlay */}
