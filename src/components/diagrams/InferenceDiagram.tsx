@@ -120,7 +120,7 @@ export default function InferenceDiagram() {
         {/* User Request Flow */}
         <g>
           {/* User */}
-          <circle cx="320" y="320" r="25" fill="#374151" stroke="#6B7280" strokeWidth="2" />
+          <circle cx="320" cy="320" r="25" fill="#374151" stroke="#6B7280" strokeWidth="2" />
           <text x="320" y="315" textAnchor="middle" fill="white" fontSize="9">User</text>
           <text x="320" y="328" textAnchor="middle" fill="white" fontSize="9">Request</text>
           
