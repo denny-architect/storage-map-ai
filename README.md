@@ -55,7 +55,7 @@ Object storage is the gravitational center of the AI data lifecycle:
 
 ### The Most Important Point
 
-During active inference — the milliseconds where the GPU is doing matrix math — object storage is **not in the path**. The model weights are in VRAM, the KV cache is in VRAM, and the forward pass is pure GPU compute. Storage loads the model and logs everything, but the generation itself is storage-free.
+During active inference — the milliseconds where the GPU is doing matrix math — object storage is **not in the path**. The model weights are in VRAM, the KV cache is in VRAM, and the forward pass is pure GPU compute. Storage loads the model and logs everything, but the generation itself is object storage-free.
 
 ## Storage Examples
 
