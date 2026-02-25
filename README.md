@@ -8,7 +8,7 @@ This is a technical reference that maps object storage's role across four major 
 
 ## 🌐 Live Site
 
-Visit the site at: [Your deployed URL]
+Visit the site at: https://denny-architect.github.io/storage-map-ai/
 
 ## Features
 
