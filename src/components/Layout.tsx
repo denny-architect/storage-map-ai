@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 
 const navLinks = [
   { path: '/', label: 'Overview' },
+  { path: '/explorer', label: 'Explorer', highlight: true },
   { path: '/training', label: 'Training' },
   { path: '/rag', label: 'RAG' },
   { path: '/fine-tuning', label: 'Fine-Tuning' },
@@ -63,6 +64,7 @@ export default function Layout() {
             <nav className="hidden md:flex items-center gap-1">
               {navLinks.map((link) => {
                 const isActive = location.pathname === link.path
+                const isHighlight = 'highlight' in link && link.highlight
                 return (
                   <Link
                     key={link.path}
@@ -70,11 +72,16 @@ export default function Layout() {
                     className={`relative px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                       isActive
                         ? 'text-white'
-                        : 'text-gray-400 hover:text-white hover:bg-white/5'
+                        : isHighlight
+                          ? 'text-raspberry-light hover:text-white hover:bg-raspberry/10'
+                          : 'text-gray-400 hover:text-white hover:bg-white/5'
                     }`}
                   >
                     {isActive && (
                       <span className="absolute inset-0 bg-gradient-to-r from-raspberry to-raspberry-dark rounded-lg -z-10" />
+                    )}
+                    {isHighlight && !isActive && (
+                      <span className="absolute -top-1 -right-1 w-2 h-2 bg-raspberry rounded-full animate-pulse" />
                     )}
                     {link.label}
                   </Link>
