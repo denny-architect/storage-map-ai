@@ -28,9 +28,14 @@ export default function Layout() {
   }, [])
 
   // Close mobile menu on route change
+  const prevPathname = location.pathname
   useEffect(() => {
-    setMobileMenuOpen(false)
-  }, [location.pathname])
+    // Only close if menu is currently open (avoids unnecessary state updates)
+    if (mobileMenuOpen) {
+      setMobileMenuOpen(false)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [prevPathname])
 
   return (
     <div className="min-h-screen flex flex-col">
