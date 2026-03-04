@@ -2,8 +2,6 @@ import { Routes, Route } from 'react-router-dom'
 import Layout from './components/Layout'
 import Home from './pages/Home'
 
-import FineTuning from './pages/FineTuning'
-import Inference from './pages/Inference'
 import Compare from './pages/Compare'
 import Paths from './pages/Paths'
 import Glossary from './pages/Glossary'
@@ -15,8 +13,6 @@ function App() {
       <Route path="/" element={<Layout />}>
         <Route index element={<Home />} />
 
-        <Route path="fine-tuning" element={<FineTuning />} />
-        <Route path="inference" element={<Inference />} />
         <Route path="compare" element={<Compare />} />
         <Route path="explorer" element={<Explorer />} />
         <Route path="paths" element={<Paths />} />

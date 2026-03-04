@@ -5,8 +5,6 @@ const navLinks = [
   { path: '/', label: 'Overview' },
   { path: '/explorer', label: 'Explorer', highlight: true },
 
-  { path: '/fine-tuning', label: 'Fine-Tuning' },
-  { path: '/inference', label: 'Inference' },
   { path: '/compare', label: 'Compare' },
   { path: '/paths', label: 'S3 Paths' },
   { path: '/glossary', label: 'Glossary' },
@@ -171,8 +169,8 @@ export default function Layout() {
                 {[
                   { to: '/explorer', label: 'Model Training' },
                   { to: '/explorer', label: 'RAG Pipelines' },
-                  { to: '/fine-tuning', label: 'Fine-Tuning (LoRA)' },
-                  { to: '/inference', label: 'Inference' },
+                  { to: '/explorer', label: 'Fine-Tuning (LoRA)' },
+                  { to: '/explorer', label: 'Inference' },
                 ].map((item) => (
                   <li key={item.to}>
                     <Link 
