@@ -65,7 +65,7 @@ const glossaryTerms: GlossaryTerm[] = [
   {
     term: 'Forward Pass',
     definition: 'A single pass of input data through a neural network to produce an output. During inference, this is the core computation that happens entirely in GPU memory — no storage I/O involved.',
-    context: 'The forward pass involves matrix multiplications through transformer layers: attention + FFN. This is the honest truth: storage is NOT in the forward pass.',
+    context: 'The forward pass involves matrix multiplications through transformer layers: attention + FFN. Storage is not in the forward pass — everything runs in GPU memory.',
     relatedTerms: ['Inference', 'Autoregressive Generation', 'GPU Memory'],
     category: 'ai-ml',
   },

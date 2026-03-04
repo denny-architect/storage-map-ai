@@ -196,7 +196,7 @@ const matrix: Record<Phase, Record<string, PhaseDetail>> = {
     inference: {
       role: 'not-in-path',
       short: 'NOT IN PATH',
-      detail: 'Forward pass is pure GPU compute. Weights in VRAM, KV cache in VRAM. Autoregressive generation — no storage I/O per token. This is the honest truth.',
+      detail: 'Forward pass is pure GPU compute. Weights in VRAM, KV cache in VRAM. Autoregressive generation — no storage I/O per token.',
       tier: 0,
       apps: ['vLLM', 'Triton'],
       s3Path: '— (GPU VRAM only)',

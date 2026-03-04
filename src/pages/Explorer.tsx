@@ -604,7 +604,7 @@ export default function Explorer() {
                 LoRA adapter swaps per tenant, logging and feedback throughout, model updates on demand. 
                 But during the actual generation — the forward pass, the attention, the token sampling — 
                 storage is not in the picture. The GPU is doing matrix math with data already in VRAM. 
-                That's the honest story. And feedback closes the loop back to fine-tuning — making 
+                That's the technical reality. And feedback closes the loop back to fine-tuning — making 
                 the model lifecycle circular.
               </BottomLine>
             </>
