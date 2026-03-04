@@ -638,14 +638,14 @@ export default function InteractiveRAGExplorer() {
                 <stop offset="0%" stopColor="#1E3A5F" />
                 <stop offset="100%" stopColor="#2563EB" />
               </linearGradient>
-              <marker id="ragArrowPrimary" markerWidth="14" markerHeight="10" refX="13" refY="5" orient="auto" markerUnits="userSpaceOnUse">
-                <polygon points="0 0, 14 5, 0 10" fill="#C72C48" />
+              <marker id="ragArrowPrimary" markerWidth="22" markerHeight="16" refX="20" refY="8" orient="auto" markerUnits="userSpaceOnUse">
+                <polygon points="0 0, 22 8, 0 16" fill="#C72C48" />
               </marker>
-              <marker id="ragArrowAmber" markerWidth="14" markerHeight="10" refX="13" refY="5" orient="auto" markerUnits="userSpaceOnUse">
-                <polygon points="0 0, 14 5, 0 10" fill="#F59E0B" />
+              <marker id="ragArrowAmber" markerWidth="22" markerHeight="16" refX="20" refY="8" orient="auto" markerUnits="userSpaceOnUse">
+                <polygon points="0 0, 22 8, 0 16" fill="#F59E0B" />
               </marker>
-              <marker id="ragArrowGreen" markerWidth="14" markerHeight="10" refX="13" refY="5" orient="auto" markerUnits="userSpaceOnUse">
-                <polygon points="0 0, 14 5, 0 10" fill="#10B981" />
+              <marker id="ragArrowGreen" markerWidth="22" markerHeight="16" refX="20" refY="8" orient="auto" markerUnits="userSpaceOnUse">
+                <polygon points="0 0, 22 8, 0 16" fill="#10B981" />
               </marker>
               <filter id="ragGlow">
                 <feGaussianBlur stdDeviation="3" result="coloredBlur" />
@@ -697,19 +697,44 @@ export default function InteractiveRAGExplorer() {
                       <animate attributeName="stroke-dashoffset" values="30;0" dur={`${1 / speed}s`} repeatCount="indefinite" />
                     )}
                   </path>
-                  {isActive && (
-                    <text
-                      x={(fromNode.x + fromNode.width / 2 + toNode.x + toNode.width / 2) / 2}
-                      y={(fromNode.y + fromNode.height + toNode.y) / 2 - 5}
-                      textAnchor="middle"
-                      fill={fromColors.fill}
-                      fontSize="10"
-                      fontWeight="600"
-                      className="pointer-events-none"
-                    >
-                      {flow.label}
-                    </text>
-                  )}
+                  {/* Flow label — offset outside the arrow path */}
+                  {isActive && (() => {
+                    const fromCx = fromNode.x + fromNode.width / 2
+                    const toCx = toNode.x + toNode.width / 2
+                    const midX = (fromCx + toCx) / 2
+                    const midY = (fromNode.y + fromNode.height + toNode.y) / 2
+                    const isVert = flow.direction === 'down' || flow.direction === 'up'
+                    const isLeft = flow.direction === 'left'
+                    // Offset label to the side of the path so it doesn't overlap
+                    const labelX = isVert ? midX + 55 : isLeft ? midX : midX
+                    const labelY = isVert ? midY + 4 : midY - 18
+                    const pillW = flow.label.length * 8 + 16
+                    return (
+                      <g className="pointer-events-none">
+                        <rect
+                          x={labelX - pillW / 2}
+                          y={labelY - 12}
+                          width={pillW}
+                          height="20"
+                          rx="6"
+                          fill="#111827"
+                          stroke={fromColors.fill}
+                          strokeWidth="1"
+                          opacity={0.95}
+                        />
+                        <text
+                          x={labelX}
+                          y={labelY + 2}
+                          textAnchor="middle"
+                          fill={fromColors.fill}
+                          fontSize="11"
+                          fontWeight="600"
+                        >
+                          {flow.label}
+                        </text>
+                      </g>
+                    )
+                  })()}
                 </g>
               )
             })}
