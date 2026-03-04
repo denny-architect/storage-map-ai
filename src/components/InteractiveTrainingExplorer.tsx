@@ -44,10 +44,10 @@ const nodes: NodeData[] = [
     id: 'raw-data',
     name: 'Raw Data Sources',
     shortName: 'Raw Data',
-    x: 80,
-    y: 40,
-    width: 160,
-    height: 90,
+    x: 50,
+    y: 30,
+    width: 220,
+    height: 130,
     type: 'process',
     role: 'primary',
     description: 'Web scrapes, Common Crawl, domain corpora, proprietary datasets',
@@ -76,10 +76,10 @@ const nodes: NodeData[] = [
     id: 'data-pipeline',
     name: 'Data Processing Pipeline',
     shortName: 'ETL Pipeline',
-    x: 80,
-    y: 160,
-    width: 160,
-    height: 90,
+    x: 50,
+    y: 220,
+    width: 220,
+    height: 130,
     type: 'process',
     role: 'primary',
     description: 'Clean, deduplicate, filter toxicity, tokenize into training shards',
@@ -108,10 +108,10 @@ const nodes: NodeData[] = [
     id: 'minio-datalake',
     name: 'MinIO AIStor Data Lake',
     shortName: 'Data Lake',
-    x: 80,
-    y: 280,
-    width: 160,
-    height: 100,
+    x: 50,
+    y: 420,
+    width: 220,
+    height: 140,
     type: 'storage',
     role: 'primary',
     description: 'S3-compatible object storage - the foundation of your AI data infrastructure',
@@ -139,10 +139,10 @@ const nodes: NodeData[] = [
     id: 'data-loader',
     name: 'Data Loader',
     shortName: 'DataLoader',
-    x: 320,
-    y: 160,
-    width: 140,
-    height: 90,
+    x: 390,
+    y: 240,
+    width: 220,
+    height: 130,
     type: 'process',
     role: 'buffered',
     description: 'PyTorch DataLoader, Mosaic StreamingDataset, or NVIDIA DALI',
@@ -170,10 +170,10 @@ const nodes: NodeData[] = [
     id: 'gpu-cluster',
     name: 'GPU Cluster',
     shortName: 'GPUs',
-    x: 520,
-    y: 140,
-    width: 160,
-    height: 130,
+    x: 730,
+    y: 170,
+    width: 230,
+    height: 200,
     type: 'compute',
     role: 'not-in-path',
     description: 'Forward pass, backward pass, gradient computation - pure GPU compute',
@@ -202,10 +202,10 @@ const nodes: NodeData[] = [
     id: 'checkpoint-store',
     name: 'Checkpoint Store',
     shortName: 'Checkpoints',
-    x: 740,
-    y: 160,
-    width: 150,
-    height: 90,
+    x: 1090,
+    y: 30,
+    width: 230,
+    height: 130,
     type: 'storage',
     role: 'primary',
     description: 'Full model state dumped every N steps for disaster recovery',
@@ -234,10 +234,10 @@ const nodes: NodeData[] = [
     id: 'experiment-tracking',
     name: 'Experiment Tracking',
     shortName: 'MLflow/W&B',
-    x: 740,
-    y: 280,
-    width: 150,
-    height: 90,
+    x: 1090,
+    y: 230,
+    width: 230,
+    height: 130,
     type: 'storage',
     role: 'primary',
     description: 'MLflow, Weights & Biases - metrics, hyperparameters, artifacts',
@@ -266,10 +266,10 @@ const nodes: NodeData[] = [
     id: 'model-registry',
     name: 'Model Registry',
     shortName: 'Registry',
-    x: 520,
-    y: 300,
-    width: 160,
-    height: 90,
+    x: 1090,
+    y: 430,
+    width: 230,
+    height: 130,
     type: 'storage',
     role: 'primary',
     description: 'Final trained model exported and versioned for downstream consumption',
@@ -614,8 +614,8 @@ export default function InteractiveTrainingExplorer() {
       </div>
 
       {/* Main Diagram */}
-      <div className="relative p-6 overflow-x-auto" style={{ minHeight: '480px' }}>
-        <svg viewBox="0 0 950 420" className="w-full min-w-[900px]">
+      <div className="relative p-6 overflow-x-auto" style={{ minHeight: '660px' }}>
+        <svg viewBox="0 0 1380 640" className="w-full min-w-[1100px]">
           <defs>
             {/* Gradients */}
             <linearGradient id="storageGrad" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -843,13 +843,13 @@ export default function InteractiveTrainingExplorer() {
                 
                 {/* Description snippet */}
                 <foreignObject 
-                  x={node.x + 8} 
-                  y={node.y + 32} 
-                  width={node.width - 16} 
-                  height={node.height - 70}
+                  x={node.x + 10} 
+                  y={node.y + 34} 
+                  width={node.width - 20} 
+                  height={node.height - 72}
                 >
-                  <div className="text-[10px] text-gray-400 leading-tight overflow-hidden">
-                    {node.description.slice(0, 60)}...
+                  <div className="text-[11px] text-gray-400 leading-snug overflow-hidden">
+                    {node.description.slice(0, 80)}...
                   </div>
                 </foreignObject>
                 
@@ -883,8 +883,8 @@ export default function InteractiveTrainingExplorer() {
 
           {/* Current Phase Indicator */}
           <text
-            x="475"
-            y="410"
+            x="690"
+            y="625"
             textAnchor="middle"
             fill="#9CA3AF"
             fontSize="12"

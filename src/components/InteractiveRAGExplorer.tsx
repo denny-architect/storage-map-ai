@@ -44,10 +44,10 @@ const nodes: NodeData[] = [
     id: 'doc-sources',
     name: 'Document Sources',
     shortName: 'Documents',
-    x: 60,
-    y: 40,
-    width: 150,
-    height: 90,
+    x: 50,
+    y: 30,
+    width: 220,
+    height: 130,
     type: 'process',
     role: 'primary',
     description: 'PDFs, web pages, APIs, internal docs arriving continuously',
@@ -74,10 +74,10 @@ const nodes: NodeData[] = [
     id: 'chunking',
     name: 'Chunking Pipeline',
     shortName: 'Chunking',
-    x: 60,
-    y: 160,
-    width: 150,
-    height: 90,
+    x: 50,
+    y: 220,
+    width: 220,
+    height: 130,
     type: 'process',
     role: 'primary',
     description: 'Split documents into semantic chunks, clean and normalize',
@@ -104,10 +104,10 @@ const nodes: NodeData[] = [
     id: 'object-storage',
     name: 'Object Storage',
     shortName: 'S3 Store',
-    x: 60,
-    y: 280,
-    width: 150,
-    height: 90,
+    x: 50,
+    y: 420,
+    width: 220,
+    height: 130,
     type: 'storage',
     role: 'primary',
     description: 'S3-compatible storage — source of truth for all documents and chunks',
@@ -135,10 +135,10 @@ const nodes: NodeData[] = [
     id: 'embedding-model',
     name: 'Embedding Model',
     shortName: 'Embedder',
-    x: 280,
-    y: 100,
-    width: 150,
-    height: 100,
+    x: 420,
+    y: 110,
+    width: 220,
+    height: 140,
     type: 'compute',
     role: 'source-read',
     description: 'Reads every chunk from storage, produces dense vector representations',
@@ -167,10 +167,10 @@ const nodes: NodeData[] = [
     id: 'vector-db',
     name: 'Vector Database',
     shortName: 'Vector DB',
-    x: 500,
-    y: 100,
-    width: 150,
-    height: 100,
+    x: 420,
+    y: 340,
+    width: 220,
+    height: 140,
     type: 'vector',
     role: 'backing-store',
     description: 'Milvus, Weaviate, LanceDB — in-memory index with S3 backing store',
@@ -199,10 +199,10 @@ const nodes: NodeData[] = [
     id: 'user-query',
     name: 'User Query',
     shortName: 'Query',
-    x: 700,
-    y: 40,
-    width: 130,
-    height: 80,
+    x: 800,
+    y: 30,
+    width: 210,
+    height: 120,
     type: 'process',
     role: 'not-in-path',
     description: 'User submits a natural language question',
@@ -228,10 +228,10 @@ const nodes: NodeData[] = [
     id: 'retrieval',
     name: 'Retrieval & Context',
     shortName: 'Retrieve',
-    x: 700,
-    y: 150,
-    width: 130,
-    height: 90,
+    x: 800,
+    y: 220,
+    width: 210,
+    height: 130,
     type: 'process',
     role: 'possibly-in-path',
     description: 'Top-K similar chunks retrieved — may or may not hit storage',
@@ -259,10 +259,10 @@ const nodes: NodeData[] = [
     id: 'llm-generation',
     name: 'LLM Generation',
     shortName: 'LLM',
-    x: 700,
-    y: 270,
-    width: 130,
-    height: 90,
+    x: 800,
+    y: 420,
+    width: 210,
+    height: 130,
     type: 'compute',
     role: 'not-in-path',
     description: 'Retrieved context assembled into prompt, LLM generates response',
@@ -323,7 +323,7 @@ const flowPaths: FlowPath[] = [
     to: 'vector-db',
     label: 'Vectors',
     dataVolume: 'heavy',
-    direction: 'right',
+    direction: 'down',
     animated: true,
     description: 'Generated vectors inserted into vector database',
   },
@@ -333,7 +333,7 @@ const flowPaths: FlowPath[] = [
     to: 'object-storage',
     label: 'Segments',
     dataVolume: 'medium',
-    direction: 'down',
+    direction: 'left',
     animated: true,
     description: 'Vector DB flushes segments to S3 backing store',
   },
@@ -615,8 +615,8 @@ export default function InteractiveRAGExplorer() {
         </div>
 
         {/* Main Diagram */}
-        <div className="relative p-6 overflow-x-auto" style={{ minHeight: '460px' }}>
-          <svg viewBox="0 0 900 400" className="w-full min-w-[850px]">
+        <div className="relative p-6 overflow-x-auto" style={{ minHeight: '660px' }}>
+          <svg viewBox="0 0 1080 620" className="w-full min-w-[1000px]">
             <defs>
               <linearGradient id="ragStorageGrad" x1="0%" y1="0%" x2="0%" y2="100%">
                 <stop offset="0%" stopColor="#374151" />
@@ -664,9 +664,9 @@ export default function InteractiveRAGExplorer() {
             <rect width="100%" height="100%" fill="url(#ragGrid)" />
 
             {/* Divider line between ingestion and query side */}
-            <line x1="650" y1="20" x2="650" y2="380" stroke="#4B5563" strokeWidth="1" strokeDasharray="8,4" opacity="0.5" />
-            <text x="350" y="395" textAnchor="middle" fill="#6B7280" fontSize="10">INGESTION (Batch)</text>
-            <text x="775" y="395" textAnchor="middle" fill="#6B7280" fontSize="10">QUERY (Real-time)</text>
+            <line x1="730" y1="20" x2="730" y2="590" stroke="#4B5563" strokeWidth="1" strokeDasharray="8,4" opacity="0.5" />
+            <text x="380" y="608" textAnchor="middle" fill="#6B7280" fontSize="10">INGESTION (Batch)</text>
+            <text x="905" y="608" textAnchor="middle" fill="#6B7280" fontSize="10">QUERY (Real-time)</text>
 
             {/* Flow Paths */}
             {flowPaths.map(flow => {
@@ -749,9 +749,9 @@ export default function InteractiveRAGExplorer() {
                   <text x={node.x + node.width / 2} y={node.y + node.height - 16} textAnchor="middle" fill="white" fontSize="9" fontWeight="600" letterSpacing="0.05em">
                     {roleLabel[node.role]}
                   </text>
-                  <foreignObject x={node.x + 8} y={node.y + 32} width={node.width - 16} height={node.height - 70}>
-                    <div className="text-[10px] text-gray-400 leading-tight overflow-hidden">
-                      {node.description.slice(0, 55)}...
+                  <foreignObject x={node.x + 10} y={node.y + 34} width={node.width - 20} height={node.height - 72}>
+                    <div className="text-[11px] text-gray-400 leading-snug overflow-hidden">
+                      {node.description.slice(0, 70)}...
                     </div>
                   </foreignObject>
                   {isHovered && (
@@ -767,7 +767,7 @@ export default function InteractiveRAGExplorer() {
             })}
 
             {/* Current Phase Indicator */}
-            <text x="450" y="385" textAnchor="middle" fill="#9CA3AF" fontSize="12" fontWeight="500">
+            <text x="540" y="600" textAnchor="middle" fill="#9CA3AF" fontSize="12" fontWeight="500">
               Phase {currentPhase}: {phases[currentPhase - 1]?.name}
             </text>
           </svg>
