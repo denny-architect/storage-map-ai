@@ -162,46 +162,50 @@ const TIERS = [
   {
     tier: 0,
     name: 'Raw Block / GDS',
+    subtitle: 'NVMe Local (Block)',
     what: 'Local NVMe, GPU-Direct Storage, mmap, PVCs',
     capacity: 'Node-local (TBs)',
     latency: '<100μs',
     isMinIO: false,
     color: '#10B981',
-    analogy: 'Like: HBA direct-attach to server',
-    notLike: 'NOT like: iSCSI over network',
+    accessMethod: 'PCIe / NVMe-oF / cuFile (GPU-Direct Storage)',
+    keyUse: 'Spark shuffle, vLLM KV cache, Weaviate HNSW index, GPU VRAM',
   },
   {
     tier: 1,
     name: 'Hot S3 (In-Cluster)',
-    what: 'MinIO Pod on local NVMe inside the K8s cluster',
+    subtitle: 'NVMe Local (PVC / S3)',
+    what: 'MinIO AIStor pod on local NVMe inside the K8s cluster',
     capacity: '100s TB+',
     latency: '1-5ms',
     isMinIO: true,
     color: '#C72C48',
-    analogy: 'Like: NVMe-oF to nearby storage',
-    notLike: 'NOT like: SAN over FC fabric',
+    accessMethod: 'S3 API over localhost / service mesh',
+    keyUse: 'DataLoader streaming, MLflow artifacts, base model load, adapter swaps',
   },
   {
     tier: 2,
-    name: 'Warm S3 (AIStor)',
-    what: 'MinIO AIStor - THE capacity tier, data lake',
+    name: 'Warm S3 (MinIO AIStor)',
+    subtitle: 'S3 over RDMA to NVMe (400 GbE)',
+    what: 'MinIO AIStor — THE capacity tier. Data Lake, Lakehouse, Medallion architecture.',
     capacity: 'PB+',
     latency: '5-15ms',
     isMinIO: true,
     color: '#F59E0B',
-    analogy: 'Like: Enterprise SAN (NetApp, Pure)',
-    notLike: 'NOT like: Your grandfather\'s NAS',
+    accessMethod: 'S3 over RDMA / RoCE v2 (400 GbE)',
+    keyUse: 'Lakehouse (Iceberg/Delta), checkpoints, model registry, document store',
   },
   {
     tier: 3,
     name: 'Cold Archive',
-    what: 'MinIO AIStor with Object Lock, ILM tiering',
+    subtitle: 'S3 to NVMe/SSD — 100 GbE (SSD Recommended)',
+    what: 'MinIO AIStor with Object Lock, ILM tiering, WORM compliance',
     capacity: 'EB+',
     latency: '15-50ms',
     isMinIO: true,
     color: '#6B7280',
-    analogy: 'Like: Tape library (but accessible)',
-    notLike: 'NOT like: Glacier (we\'re on-prem)',
+    accessMethod: 'S3 with Object Lock + ILM lifecycle rules (100 GbE)',
+    keyUse: 'Compliance archive, audit logs (SEC 17a-4(f)), retired model versions',
   },
 ]
 
@@ -502,16 +506,17 @@ function TierView({ tiers }: { tiers: typeof TIERS }) {
               )}
             </div>
 
+            <p className="text-gray-400 text-xs mb-1">{tier.subtitle}</p>
             <p className="text-gray-300 text-sm mb-4">{tier.what}</p>
 
             <div className="space-y-2 text-xs">
-              <div className="flex items-start gap-2">
-                <span className="text-green-400">✓</span>
-                <span className="text-gray-400">{tier.analogy}</span>
+              <div>
+                <span className="text-gray-500 uppercase tracking-wider text-[10px]">Access</span>
+                <p className="text-gray-300 mt-0.5">{tier.accessMethod}</p>
               </div>
-              <div className="flex items-start gap-2">
-                <span className="text-red-400">✗</span>
-                <span className="text-gray-400">{tier.notLike}</span>
+              <div>
+                <span className="text-gray-500 uppercase tracking-wider text-[10px]">Key Use</span>
+                <p className="text-gray-300 mt-0.5">{tier.keyUse}</p>
               </div>
             </div>
           </div>
