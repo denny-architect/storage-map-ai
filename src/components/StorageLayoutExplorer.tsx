@@ -364,8 +364,17 @@ export default function StorageLayoutExplorer() {
           <div className="flex items-center gap-3">
             <button
               onClick={() => setShowLakehouseInfo(true)}
-              className="px-4 py-2 rounded-lg bg-amber-500/20 text-amber-400 text-sm font-medium hover:bg-amber-500/30 transition-colors border border-amber-500/30"
+              className="relative px-4 py-2 rounded-lg bg-amber-500/20 text-amber-400 text-sm font-medium hover:bg-amber-500/30 transition-colors border border-amber-500/30"
             >
+              {/* Follow-me badge from Storage Tiers (step 3 purple) */}
+              <span
+                className="absolute -top-2.5 -right-2.5 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold text-white shadow-lg animate-pulse"
+                style={{ backgroundColor: '#8B5CF6', boxShadow: '0 0 8px rgba(139,92,246,0.6)' }}
+              >
+                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+              </span>
               Data Lake vs Lakehouse?
             </button>
           </div>

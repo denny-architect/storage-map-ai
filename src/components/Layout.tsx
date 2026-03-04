@@ -7,7 +7,7 @@ const navLinks = [
 
   { path: '/compare', label: 'Compare' },
   { path: '/paths', label: 'S3 Paths' },
-  { path: '/glossary', label: 'Glossary' },
+  { path: '/glossary', label: 'Glossary & Reference' },
 ]
 
 export default function Layout() {

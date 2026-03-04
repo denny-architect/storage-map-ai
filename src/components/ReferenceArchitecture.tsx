@@ -285,19 +285,33 @@ export default function ReferenceArchitecture() {
       <div className="border-b border-white/10 px-6 py-3 bg-gray-800/50">
         <div className="flex gap-2">
           {[
-            { id: 'pipeline', label: 'Pipeline Flow', desc: 'Step-by-step' },
-            { id: 'tiers', label: 'Storage Tiers', desc: '4-tier layout' },
-            { id: 'stack', label: 'The Stack', desc: 'Software choices' },
+            { id: 'pipeline', label: 'Pipeline Flow', desc: 'Step-by-step', step: 2, color: '#10B981' },
+            { id: 'tiers', label: 'Storage Tiers', desc: '4-tier layout', step: 3, color: '#8B5CF6' },
+            { id: 'stack', label: 'The Stack', desc: 'Software choices', step: 4, color: '#3B82F6' },
           ].map((view) => (
             <button
               key={view.id}
               onClick={() => setViewMode(view.id as typeof viewMode)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+              className={`relative px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                 viewMode === view.id
                   ? 'bg-raspberry text-white'
                   : 'bg-gray-700/50 text-gray-300 hover:bg-gray-700'
               }`}
             >
+              {/* Step number badge */}
+              <span
+                className="absolute -top-2.5 -left-2.5 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold text-white shadow-lg"
+                style={{ backgroundColor: view.color, boxShadow: `0 0 8px ${view.color}60` }}
+              >
+                {view.step}
+              </span>
+              {/* Follow-me indicator */}
+              <span
+                className="absolute -top-2 -right-2 px-1.5 py-0.5 text-[8px] font-bold rounded-full text-white animate-pulse"
+                style={{ backgroundColor: view.color }}
+              >
+                FOLLOW
+              </span>
               <span className="block">{view.label}</span>
               <span className="block text-[10px] opacity-70">{view.desc}</span>
             </button>

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { PageHeader } from '../components/PipelineDiagram'
+import DataGravityChart from '../components/DataGravityChart'
 
 interface GlossaryTerm {
   term: string
@@ -359,6 +360,29 @@ const glossaryTerms: GlossaryTerm[] = [
   },
 ]
 
+const myths = [
+  {
+    myth: '"Object storage is in the inference hot path"',
+    reality: 'During active generation, everything happens in GPU memory. The model weights are already loaded. The KV cache lives in VRAM. Storage touches inference at model load and logging \u2014 not during the forward pass.',
+  },
+  {
+    myth: '"RAG is an inference workload"',
+    reality: "RAG is a retrieval + generation pipeline. The retrieval phase (document ingestion, chunking, embedding, vector search) has its own storage patterns. Only the final generation step shares patterns with inference.",
+  },
+  {
+    myth: '"Fine-tuning requires the same storage footprint as pre-training"',
+    reality: 'With LoRA, you freeze 99%+ of the base model. A fine-tuning checkpoint for a 70B model might be 100MB (the adapter) versus 500GB+ for a full training checkpoint. Different orders of magnitude.',
+  },
+  {
+    myth: '"All AI workloads need low-latency storage"',
+    reality: 'Most AI storage operations are throughput-bound, not latency-bound. Training reads sequential batches. Checkpoints are large sequential writes. Model loading is a bulk transfer. Optimize for GB/s, not IOPS.',
+  },
+  {
+    myth: '"You need special AI-specific storage"',
+    reality: 'You need storage that does the basics exceptionally well: S3-compatible APIs, high aggregate throughput, erasure coding for durability, and the ability to scale to petabytes. That\'s enterprise object storage.',
+  },
+]
+
 type CategoryFilter = 'all' | 'ai-ml' | 'storage' | 'minio'
 
 export default function Glossary() {
@@ -393,12 +417,150 @@ export default function Glossary() {
   return (
     <div>
       <PageHeader
-        title="Glossary"
-        subtitle="AI Storage Jargon Decoder"
-        description="AI/ML and storage terminology explained the way an engineer would explain it at a whiteboard — not the way a textbook would. MinIO AIStor features cross-referenced with the whitepaper."
+        title="Glossary, Data Gravity & Misconceptions"
+        subtitle="AI Storage Reference"
+        description="Data gravity visualized. Common myths busted. AI/ML and storage terminology explained the way an engineer would explain it at a whiteboard. Explorer usage tips. MinIO AIStor features cross-referenced with the whitepaper."
       />
 
+      {/* Data Gravity Section */}
+      <section className="py-16 bg-gray-50 relative overflow-hidden">
+        <div className="absolute -right-20 top-1/2 -translate-y-1/2 w-80 h-80 bg-raspberry/5 rounded-full blur-3xl" />
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <span className="inline-block px-4 py-2 bg-raspberry/10 text-raspberry font-medium text-sm rounded-full mb-4">
+              Scale Comparison
+            </span>
+            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">Data Gravity: A Visual Comparison</h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              The relative data volumes across AI workloads span many orders of magnitude. 
+              This is why one-size-fits-all storage advice doesn't work.
+            </p>
+          </div>
+          <DataGravityChart />
+        </div>
+      </section>
+
+      {/* Misconceptions Section */}
+      <section className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <span className="inline-block px-4 py-2 bg-gray-100 text-gray-700 font-medium text-sm rounded-full mb-4">
+              Myth Busting
+            </span>
+            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">Common Misconceptions</h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              These get repeated in pitch decks and conference talks. Here's what's actually true.
+            </p>
+          </div>
+          <div className="space-y-4">
+            {myths.map((item, index) => (
+              <div 
+                key={index} 
+                className="bg-gradient-to-r from-gray-50 to-white rounded-2xl p-6 lg:p-8 border border-gray-100 hover:border-raspberry/30 hover:shadow-lg transition-all duration-300"
+              >
+                <div className="flex items-start gap-5">
+                  <div className="flex-shrink-0 w-12 h-12 bg-raspberry/10 rounded-xl flex items-center justify-center">
+                    <svg className="w-6 h-6 text-raspberry" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-gray-900 mb-2">
+                      Myth: {item.myth}
+                    </h3>
+                    <p className="text-gray-600 leading-relaxed">
+                      <span className="font-semibold text-raspberry">Reality:</span> {item.reality}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* How to Use the Explorer */}
+      <section className="py-16 bg-gradient-to-b from-white to-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <span className="inline-block px-4 py-2 bg-blue-100 text-blue-700 font-medium text-sm rounded-full mb-4">
+              Getting Started
+            </span>
+            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">How to Use the Explorer</h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Tips for getting the most out of the interactive pipeline explorer.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            <div className="bg-white rounded-xl border border-gray-200 p-6 card-hover">
+              <div className="w-12 h-12 rounded-xl bg-raspberry/10 flex items-center justify-center mb-4">
+                <svg className="w-6 h-6 text-raspberry" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+              </div>
+              <h3 className="font-semibold text-gray-900 mb-2">Watch the Flow</h3>
+              <p className="text-sm text-gray-600">
+                Animated data paths show how data moves through the pipeline. Thicker lines = more data volume.
+              </p>
+            </div>
+            <div className="bg-white rounded-xl border border-gray-200 p-6 card-hover">
+              <div className="w-12 h-12 rounded-xl bg-amber-500/10 flex items-center justify-center mb-4">
+                <svg className="w-6 h-6 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
+                </svg>
+              </div>
+              <h3 className="font-semibold text-gray-900 mb-2">Click to Explore</h3>
+              <p className="text-sm text-gray-600">
+                Click any node to see detailed information: S3 paths, I/O profiles, and MinIO AIStor features.
+              </p>
+            </div>
+            <div className="bg-white rounded-xl border border-gray-200 p-6 card-hover">
+              <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center mb-4">
+                <svg className="w-6 h-6 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <h3 className="font-semibold text-gray-900 mb-2">Control Playback</h3>
+              <p className="text-sm text-gray-600">
+                Use Play/Pause/Step controls to move through pipeline phases. Adjust speed for detailed analysis.
+              </p>
+            </div>
+          </div>
+
+          {/* Big Picture Insight */}
+          <div className="relative bg-gradient-to-r from-raspberry/5 via-raspberry/10 to-raspberry/5 border-2 border-raspberry/20 rounded-2xl p-8 overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-raspberry/10 rounded-full blur-2xl" />
+            <div className="relative flex items-start gap-4">
+              <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-raspberry to-raspberry-dark rounded-xl flex items-center justify-center shadow-lg shadow-raspberry/30">
+                <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="font-bold text-raspberry text-lg mb-2">The Big Picture</h3>
+                <p className="text-gray-700 leading-relaxed">
+                  <strong>Storage intensity varies dramatically across AI workloads.</strong> Training is storage-heavy from start to finish (100%). 
+                  RAG depends on your architecture (75%). Fine-tuning is a lighter version of training (45%). 
+                  And inference? Object storage loads the model and logs results, but the actual generation loop is <strong>compute-only</strong> (20%).
+                </p>
+                <p className="text-gray-600 mt-3 text-sm">
+                  The explorer helps you understand exactly where MinIO AIStor fits in each pipeline \u2014 and where it doesn't.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Glossary Terms */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">Glossary Terms</h2>
+          <p className="text-lg text-gray-600">AI/ML and storage terminology explained for engineers.</p>
+        </div>
+
         {/* Search */}
         <div className="mb-6">
           <div className="relative">

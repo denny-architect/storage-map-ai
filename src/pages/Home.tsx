@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom'
-import DataGravityChart from '../components/DataGravityChart'
 
 const pipelines = [
   {
@@ -64,29 +63,6 @@ const pipelines = [
   },
 ]
 
-const myths = [
-  {
-    myth: '"Object storage is in the inference hot path"',
-    reality: 'During active generation, everything happens in GPU memory. The model weights are already loaded. The KV cache lives in VRAM. Storage touches inference at model load and logging — not during the forward pass.',
-  },
-  {
-    myth: '"RAG is an inference workload"',
-    reality: "RAG is a retrieval + generation pipeline. The retrieval phase (document ingestion, chunking, embedding, vector search) has its own storage patterns. Only the final generation step shares patterns with inference.",
-  },
-  {
-    myth: '"Fine-tuning requires the same storage footprint as pre-training"',
-    reality: 'With LoRA, you freeze 99%+ of the base model. A fine-tuning checkpoint for a 70B model might be 100MB (the adapter) versus 500GB+ for a full training checkpoint. Different orders of magnitude.',
-  },
-  {
-    myth: '"All AI workloads need low-latency storage"',
-    reality: 'Most AI storage operations are throughput-bound, not latency-bound. Training reads sequential batches. Checkpoints are large sequential writes. Model loading is a bulk transfer. Optimize for GB/s, not IOPS.',
-  },
-  {
-    myth: '"You need special AI-specific storage"',
-    reality: 'You need storage that does the basics exceptionally well: S3-compatible APIs, high aggregate throughput, erasure coding for durability, and the ability to scale to petabytes. That\'s enterprise object storage.',
-  },
-]
-
 const intensityConfig: Record<string, { bg: string; text: string; label: string }> = {
   critical: { bg: 'bg-gradient-to-r from-raspberry to-raspberry-dark', text: 'text-white', label: 'Critical Path' },
   high: { bg: 'bg-gradient-to-r from-amber-500 to-orange-500', text: 'text-white', label: 'High Involvement' },
@@ -136,7 +112,7 @@ export default function Home() {
                 to="/glossary"
                 className="btn-secondary inline-flex items-center px-8 py-4 text-white font-semibold rounded-xl transition-all"
               >
-                Glossary
+                Glossary & Reference
               </Link>
             </div>
           </div>
@@ -206,66 +182,6 @@ export default function Home() {
                   </svg>
                 </div>
               </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Data Gravity Visualization */}
-      <section className="py-20 bg-gray-50 relative overflow-hidden">
-        {/* Decorative element */}
-        <div className="absolute -right-20 top-1/2 -translate-y-1/2 w-80 h-80 bg-raspberry/5 rounded-full blur-3xl" />
-        
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <span className="inline-block px-4 py-2 bg-raspberry/10 text-raspberry font-medium text-sm rounded-full mb-4">
-              Scale Comparison
-            </span>
-            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">Data Gravity: A Visual Comparison</h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              The relative data volumes across AI workloads span many orders of magnitude. 
-              This is why one-size-fits-all storage advice doesn't work.
-            </p>
-          </div>
-          <DataGravityChart />
-        </div>
-      </section>
-
-      {/* Myths Section */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <span className="inline-block px-4 py-2 bg-gray-100 text-gray-700 font-medium text-sm rounded-full mb-4">
-              Myth Busting
-            </span>
-            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">Common Misconceptions</h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              These get repeated in pitch decks and conference talks. Here's what's actually true.
-            </p>
-          </div>
-
-          <div className="space-y-4">
-            {myths.map((item, index) => (
-              <div 
-                key={index} 
-                className="bg-gradient-to-r from-gray-50 to-white rounded-2xl p-6 lg:p-8 border border-gray-100 hover:border-raspberry/30 hover:shadow-lg transition-all duration-300"
-              >
-                <div className="flex items-start gap-5">
-                  <div className="flex-shrink-0 w-12 h-12 bg-raspberry/10 rounded-xl flex items-center justify-center">
-                    <svg className="w-6 h-6 text-raspberry" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-gray-900 mb-2">
-                      Myth: {item.myth}
-                    </h3>
-                    <p className="text-gray-600 leading-relaxed">
-                      <span className="font-semibold text-raspberry">Reality:</span> {item.reality}
-                    </p>
-                  </div>
-                </div>
-              </div>
             ))}
           </div>
         </div>
