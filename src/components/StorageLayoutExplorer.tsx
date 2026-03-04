@@ -84,7 +84,7 @@ const storageTiers: StorageTier[] = [
     id: 'tier-0',
     tier: 0,
     name: 'Raw Block / GDS',
-    subtitle: 'GPU-Direct Storage',
+    subtitle: 'NVMe Local (Block)',
     capacity: 'Node-Local (TBs)',
     latency: '<100μs',
     isMinIO: false,
@@ -121,7 +121,7 @@ const storageTiers: StorageTier[] = [
       },
     ],
     details: [
-      'This is NOT MinIO - pure block I/O',
+      'This is NOT MinIO AIStor — pure block I/O',
       'GPU-Direct Storage (GDS) via cuFile',
       'Sub-100μs P99 latency required',
       'Ephemeral - not durable storage',
@@ -133,12 +133,12 @@ const storageTiers: StorageTier[] = [
     id: 'tier-1',
     tier: 1,
     name: 'Hot S3 (In-Cluster)',
-    subtitle: 'MinIO Pod on NVMe',
+    subtitle: 'NVMe Local (PVC / S3)',
     capacity: '100s TB+',
     latency: '1-5ms',
     isMinIO: true,
     color: '#C72C48', // MinIO Raspberry
-    description: 'MinIO Pod running IN-CLUSTER on local NVMe. Operational S3 for active workloads - NOT capacity tier.',
+    description: 'MinIO AIStor Pod running IN-CLUSTER on local NVMe. Operational S3 for active workloads — NOT capacity tier.',
     accessMethod: 'S3 API (http://minio-local.ai-ns)',
     components: [
       {
@@ -179,25 +179,25 @@ const storageTiers: StorageTier[] = [
       },
     ],
     details: [
-      'MinIO Pod IN-CLUSTER (not adjacent)',
+      'MinIO AIStor Pod IN-CLUSTER (not adjacent)',
       'Single pod with local NVMe drives',
-      'Operational S3 - not capacity tier',
+      'Operational S3 — not capacity tier',
       '325 GiB/s read throughput',
-      'S3 API over localhost/service mesh',
+      'S3 API over localhost / service mesh',
       'DataLoader streaming, pipeline artifacts',
     ],
   },
   {
     id: 'tier-2',
     tier: 2,
-    name: 'Warm S3 (AIStor)',
-    subtitle: 'Capacity Data Lake',
+    name: 'Warm S3 (MinIO AIStor)',
+    subtitle: 'S3 over RDMA to NVMe (400GbE)',
     capacity: 'PB+',
     latency: '5-15ms',
     isMinIO: true,
     color: '#F59E0B', // Amber
-    description: 'MinIO AIStor - THE capacity tier. Data Lake, Lakehouse, Medallion architecture. S3 Tables (Iceberg/Delta/Hudi).',
-    accessMethod: 'S3 over RDMA / RoCE v2',
+    description: 'MinIO AIStor — THE capacity tier. Data Lake, Lakehouse, Medallion architecture. S3 Tables (Iceberg/Delta/Hudi). 400GbE RoCE v2.',
+    accessMethod: 'S3 over RDMA / RoCE v2 (400GbE)',
     components: [
       {
         id: 'checkpoints',
@@ -237,11 +237,11 @@ const storageTiers: StorageTier[] = [
       },
     ],
     details: [
-      'MinIO AIStor - CAPACITY TIER',
+      'MinIO AIStor — CAPACITY TIER',
       'The Data Lake / Lakehouse lives here',
       'S3 Tables: Iceberg, Delta, Hudi',
       'Medallion: Bronze → Silver → Gold',
-      '400GbE RoCE v2 fabric',
+      'S3 over RDMA to NVMe — 400GbE RoCE v2',
       'Erasure coding for durability',
     ],
   },
@@ -249,13 +249,13 @@ const storageTiers: StorageTier[] = [
     id: 'tier-3',
     tier: 3,
     name: 'Cold Archive',
-    subtitle: 'Compliance & Retention',
+    subtitle: 'S3 to NVMe/SSD — 100GbE (SSD Recommended)',
     capacity: 'EB+',
     latency: '15-50ms',
     isMinIO: true,
     color: '#6B7280', // Gray
-    description: 'MinIO AIStor with Object Lock. 7-year retention, WORM compliance, immutable audit trails.',
-    accessMethod: 'S3 w/ Object Lock + ILM',
+    description: 'MinIO AIStor with Object Lock. S3 to NVMe/SSD over 100GbE. 7-year retention, WORM compliance, immutable audit trails.',
+    accessMethod: 'S3 w/ Object Lock + ILM (100GbE)',
     components: [
       {
         id: 'trustyai-logs',
@@ -488,8 +488,8 @@ export default function StorageLayoutExplorer() {
             <div>
               <h4 className="text-sm font-semibold text-emerald-400 mb-1">The Critical Insight</h4>
               <p className="text-sm text-gray-400">
-                <strong className="text-white">Tier 0 is NOT MinIO.</strong> It's raw block I/O — NVMe direct to GPU via GDS. 
-                MinIO starts at Tier 1 (in-cluster operational S3) and scales through Tier 2 (capacity) to Tier 3 (archive). 
+                <strong className="text-white">Tier 0 is NOT MinIO AIStor.</strong> It's raw block I/O — NVMe direct to GPU via GDS. 
+                MinIO AIStor starts at Tier 1 (in-cluster operational S3) and scales through Tier 2 (capacity) to Tier 3 (archive). 
                 The architecture is non-static by design — workloads float to the right tier based on latency and capacity needs.
               </p>
             </div>
@@ -516,15 +516,15 @@ export default function StorageLayoutExplorer() {
         <div className="flex flex-wrap items-center justify-center gap-6 text-xs">
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 rounded bg-emerald-500" />
-            <span className="text-gray-400">Tier 0: Raw Block (NOT MinIO)</span>
+            <span className="text-gray-400">Tier 0: NVMe Local Block (NOT MinIO AIStor)</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 rounded bg-raspberry" />
-            <span className="text-gray-400">Tier 1: Hot S3 (In-Cluster MinIO)</span>
+            <span className="text-gray-400">Tier 1: NVMe Local PVC/S3 (MinIO AIStor)</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 rounded bg-amber-500" />
-            <span className="text-gray-400">Tier 2: Warm S3 (AIStor Capacity)</span>
+            <span className="text-gray-400">Tier 2: RDMA/S3 to NVMe 400GbE (MinIO AIStor)</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 rounded bg-gray-500" />
@@ -586,12 +586,12 @@ function TierCard({ tier, isSelected, isHighlighted, isDimmed, onClick, onCompon
           </span>
           {!tier.isMinIO && (
             <span className="px-2 py-1 rounded-full text-xs font-medium bg-emerald-500/20 text-emerald-400">
-              NOT MinIO
+              NOT MinIO AIStor
             </span>
           )}
           {tier.isMinIO && (
             <span className="px-2 py-1 rounded-full text-xs font-medium bg-raspberry/20 text-raspberry">
-              MinIO
+              MinIO AIStor
             </span>
           )}
         </div>
@@ -813,7 +813,7 @@ function LakehouseModal({ onClose }: { onClose: () => void }) {
               MinIO S3 Tables — The Best of Both Worlds
             </h4>
             <p className="text-sm text-gray-300 mb-3">
-              MinIO now supports <strong className="text-white">S3 Tables</strong> — native Iceberg, Hudi, and Delta Sharing 
+              MinIO AIStor now supports <strong className="text-white">S3 Tables</strong> — native Iceberg, Hudi, and Delta Sharing 
               support for on-prem data. Databricks Validated.
             </p>
             <div className="bg-gray-800/50 rounded-lg p-3 text-sm font-mono text-raspberry-light">
@@ -821,7 +821,7 @@ function LakehouseModal({ onClose }: { onClose: () => void }) {
               → S3 Tables (Iceberg)<br/>
               → Delta Sharing<br/>
               → Databricks Unity (AWS)<br/>
-              <span className="text-emerald-400">→ ZERO COPY — data never leaves MinIO</span>
+              <span className="text-emerald-400">→ ZERO COPY — data never leaves MinIO AIStor</span>
             </div>
           </div>
 

@@ -13,7 +13,7 @@ interface Component {
 const components: Component[] = [
   {
     id: 'minio',
-    name: 'MinIO',
+    name: 'MinIO AIStor',
     description: 'S3-compatible object storage for documents, embeddings backup, and observability data',
     role: 'Primary storage layer - document source of truth, vector DB backing, log storage',
     phase: 'All Phases',
@@ -88,7 +88,7 @@ const pipelinePhases = [
   {
     phase: 'Document Ingestion',
     components: ['minio', 'maxi'],
-    description: 'NASA APOD documents stored in MinIO, processed by Maxi embedder',
+    description: 'NASA APOD documents stored in MinIO AIStor, processed by Maxi embedder',
     storageRole: 'PRIMARY',
   },
   {
@@ -100,7 +100,7 @@ const pipelinePhases = [
   {
     phase: 'Vector Storage',
     components: ['clickhouse', 'minio'],
-    description: 'Embeddings stored in ClickHouse, backed by MinIO for durability',
+    description: 'Embeddings stored in ClickHouse, backed by MinIO AIStor for durability',
     storageRole: 'BACKING STORE',
   },
   {
@@ -118,7 +118,7 @@ const pipelinePhases = [
   {
     phase: 'Observability',
     components: ['grafana', 'minio'],
-    description: 'Metrics and logs stored in MinIO, visualized in Grafana',
+    description: 'Metrics and logs stored in MinIO AIStor, visualized in Grafana',
     storageRole: 'PRIMARY',
   },
 ]
@@ -129,7 +129,7 @@ export default function DemoStack() {
       <PageHeader
         title="Demo Stack"
         subtitle="APOD RAG Reference Architecture"
-        description="A working RAG implementation using NASA's Astronomy Picture of the Day as the knowledge base. This maps each component to its role in the pipeline and shows where MinIO fits."
+        description="A working RAG implementation using NASA's Astronomy Picture of the Day as the knowledge base. This maps each component to its role in the pipeline and shows where MinIO AIStor fits."
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -166,7 +166,7 @@ export default function DemoStack() {
               <g>
                 <rect x="50" y="400" width="900" height="80" rx="12" fill="url(#demoStorageGrad)" stroke="#C72C48" strokeWidth="2" />
                 <text x="500" y="440" textAnchor="middle" fill="white" fontSize="16" fontWeight="bold">
-                  MinIO Object Storage
+                  MinIO AIStor Object Storage
                 </text>
                 <text x="500" y="460" textAnchor="middle" fill="#FCA5A5" fontSize="11">
                   apod-docs/ | embeddings-backup/ | observability-logs/ | model-cache/
@@ -180,7 +180,7 @@ export default function DemoStack() {
                 <text x="170" y="125" textAnchor="middle" fill="#9CA3AF" fontSize="11">Maxi Embedder</text>
                 <text x="170" y="145" textAnchor="middle" fill="#9CA3AF" fontSize="10">Chunks → Embeds</text>
                 <rect x="100" y="160" width="140" height="18" rx="4" fill="#C72C48" />
-                <text x="170" y="172" textAnchor="middle" fill="white" fontSize="9" fontWeight="500">FROM MinIO</text>
+                <text x="170" y="172" textAnchor="middle" fill="white" fontSize="9" fontWeight="500">FROM MinIO AIStor</text>
                 
                 {/* Arrow from storage */}
                 <path d="M 170 395 L 170 195" stroke="#C72C48" strokeWidth="3" markerEnd="url(#demoArrowRed)" />
@@ -409,7 +409,7 @@ export default function DemoStack() {
               <div>
                 <h4 className="font-semibold text-gray-900 mb-2">Storage is Pervasive</h4>
                 <p className="text-gray-600 text-sm">
-                  MinIO touches 5 of the 6 pipeline phases. It's the document source, the vector DB backing store, 
+                  MinIO AIStor touches 5 of the 6 pipeline phases. It's the document source, the vector DB backing store, 
                   the observability data lake, and the optional model cache. Only GPU compute is storage-free.
                 </p>
               </div>
@@ -425,7 +425,7 @@ export default function DemoStack() {
         </section>
 
         <BottomLine>
-          This demo stack shows a complete RAG implementation where MinIO provides the storage backbone 
+          This demo stack shows a complete RAG implementation where MinIO AIStor provides the storage backbone 
           for every phase except active LLM generation. The pattern applies to any S3-compatible object store 
           and any RAG architecture: storage owns the data lifecycle, compute owns the generation.
         </BottomLine>

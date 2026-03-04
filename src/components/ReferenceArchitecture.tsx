@@ -57,7 +57,7 @@ const PIPELINE_PHASES: PipelinePhase[] = [
     dataVolume: 'Terabytes per job',
     latencyReq: '5-15ms (batch)',
     minioRole: 'Medallion Architecture Host',
-    metaComparison: 'META: Custom data preprocessing. You: Spark + Iceberg on MinIO.',
+    metaComparison: 'META: Custom data preprocessing. You: Spark + Iceberg on MinIO AIStor.',
   },
   {
     id: 'shuffle',
@@ -117,7 +117,7 @@ const PIPELINE_PHASES: PipelinePhase[] = [
     dataVolume: 'GBs per experiment',
     latencyReq: '1-5ms',
     minioRole: 'MLflow artifact backend',
-    metaComparison: 'META: Internal tooling. You: MLflow + MinIO.',
+    metaComparison: 'META: Internal tooling. You: MLflow + MinIO AIStor.',
   },
   {
     id: 'vectorize',
@@ -141,7 +141,7 @@ const PIPELINE_PHASES: PipelinePhase[] = [
     dataVolume: '100s GB per model',
     latencyReq: '5-15ms',
     minioRole: 'Model Registry (S3 versioning)',
-    metaComparison: 'META: Internal registry. You: MinIO with versioning.',
+    metaComparison: 'META: Internal registry. You: MinIO AIStor with versioning.',
   },
   {
     id: 'archive',
@@ -153,7 +153,7 @@ const PIPELINE_PHASES: PipelinePhase[] = [
     dataVolume: 'Exabytes over time',
     latencyReq: '15-50ms OK',
     minioRole: 'Object Lock, WORM, SEC 17a-4',
-    metaComparison: 'META: Compliance requirements. You: MinIO Object Lock.',
+    metaComparison: 'META: Compliance requirements. You: MinIO AIStor Object Lock.',
   },
 ]
 
@@ -426,7 +426,7 @@ function PipelineView({
               <div className="text-white text-sm">{selectedPhase.latencyReq}</div>
             </div>
             <div className="bg-gray-900/50 rounded-lg p-4">
-              <div className="text-xs text-gray-500 uppercase tracking-wider mb-1">MinIO Role</div>
+              <div className="text-xs text-gray-500 uppercase tracking-wider mb-1">MinIO AIStor Role</div>
               <div className="text-white text-sm font-medium" style={{ color: selectedPhase.tier === 0 ? '#EF4444' : '#C72C48' }}>
                 {selectedPhase.minioRole}
               </div>
@@ -450,7 +450,7 @@ function PipelineView({
               style={{ backgroundColor: tier.color }}
             />
             <span className="text-xs text-gray-400">
-              T{tier.tier}: {tier.name} {!tier.isMinIO && '(NOT MinIO)'}
+              T{tier.tier}: {tier.name} {!tier.isMinIO && '(NOT MinIO AIStor)'}
             </span>
           </div>
         ))}
@@ -464,7 +464,7 @@ function TierView({ tiers }: { tiers: typeof TIERS }) {
     <div className="space-y-4">
       <div className="text-sm text-gray-400 mb-4">
         <strong className="text-white">The 4 Tiers:</strong> Understand where data lives at each latency target.
-        Note: Tier 0 is NOT MinIO.
+        Note: Tier 0 is NOT MinIO AIStor.
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -492,12 +492,12 @@ function TierView({ tiers }: { tiers: typeof TIERS }) {
               </div>
               {!tier.isMinIO && (
                 <span className="px-2 py-1 bg-red-500/20 text-red-400 text-xs font-bold rounded-full">
-                  NOT MinIO
+                  NOT MinIO AIStor
                 </span>
               )}
               {tier.isMinIO && (
                 <span className="px-2 py-1 bg-raspberry/20 text-raspberry text-xs font-bold rounded-full">
-                  MinIO
+                  MinIO AIStor
                 </span>
               )}
             </div>
