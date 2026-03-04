@@ -54,7 +54,7 @@ const glossaryTerms: GlossaryTerm[] = [
   {
     term: 'Erasure Coding',
     definition: 'A data protection method that splits data into fragments with redundant parity data, allowing reconstruction if some fragments are lost. More storage-efficient than simple replication.',
-    context: 'MinIO uses Reed-Solomon erasure coding. A 4+2 configuration can lose any 2 drives and recover.',
+    context: 'MinIO AIStor uses Reed-Solomon erasure coding. A 4+2 configuration can lose any 2 drives and recover.',
     relatedTerms: ['Durability', 'Object Storage'],
   },
   {
@@ -91,7 +91,7 @@ const glossaryTerms: GlossaryTerm[] = [
     term: 'Object Storage',
     definition: 'A storage architecture that manages data as discrete objects with metadata, accessed via HTTP/S3 APIs. Scales to exabytes, provides durability via erasure coding, and is the foundation of AI data infrastructure.',
     context: 'S3-compatible object storage is the de facto standard for AI/ML: training data, checkpoints, model registry, logs.',
-    relatedTerms: ['S3', 'MinIO', 'Data Lake'],
+    relatedTerms: ['S3', 'MinIO AIStor', 'Data Lake'],
   },
   {
     term: 'ONNX',

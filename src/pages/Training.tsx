@@ -28,7 +28,7 @@ const trainingPhases: Phase[] = [
       's3://data-lake/silver/deduplicated/',
       's3://data-lake/gold/tokenized-shards/',
     ],
-    details: 'This is where raw data becomes training-ready. Spark reads from Bronze, deduplicates, filters toxicity, normalizes formats, and writes to Silver. Then another pass tokenizes, shards, and writes to Gold. Every transformation is a full read-write cycle through object storage. Iceberg table format provides ACID transactions, schema evolution, and time travel — critical for reproducibility. This phase can run for days on petabyte-scale datasets and is entirely storage-bound: Spark is reading and writing to MinIO at every step.',
+    details: 'This is where raw data becomes training-ready. Spark reads from Bronze, deduplicates, filters toxicity, normalizes formats, and writes to Silver. Then another pass tokenizes, shards, and writes to Gold. Every transformation is a full read-write cycle through object storage. Iceberg table format provides ACID transactions, schema evolution, and time travel — critical for reproducibility. This phase can run for days on petabyte-scale datasets and is entirely storage-bound: Spark is reading and writing to MinIO AIStor at every step.',
     ioProfile: 'Batch read/write cycles, Iceberg tables, TB-scale per job, storage-bound',
   },
   {
