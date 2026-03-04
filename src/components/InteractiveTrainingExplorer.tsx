@@ -46,11 +46,11 @@ const nodes: NodeData[] = [
     shortName: 'Raw Data',
     x: 50,
     y: 30,
-    width: 220,
-    height: 130,
+    width: 230,
+    height: 140,
     type: 'process',
     role: 'primary',
-    description: 'Web scrapes, Common Crawl, domain corpora, proprietary datasets',
+    description: 'Web scrapes, Common Crawl, domain corpora, proprietary datasets — petabytes of unstructured data lands here first',
     details: [
       'Petabytes of unstructured data lands here first',
       'Sources: web crawls, licensed datasets, internal data',
@@ -74,29 +74,30 @@ const nodes: NodeData[] = [
   },
   {
     id: 'data-pipeline',
-    name: 'Data Processing Pipeline',
-    shortName: 'ETL Pipeline',
+    name: 'ELT Pipeline',
+    shortName: 'ELT Pipeline',
     x: 50,
-    y: 220,
-    width: 220,
-    height: 130,
+    y: 290,
+    width: 230,
+    height: 140,
     type: 'process',
     role: 'primary',
-    description: 'Clean, deduplicate, filter toxicity, tokenize into training shards',
+    description: 'Extract-Load-Transform: data lands in the lake FIRST (raw), then is cleaned, deduped, filtered, and promoted in place',
     details: [
-      'Deduplication removes redundant data (often 30-50%)',
+      'ELT, not ETL — data lands in object storage first',
+      'Deduplication removes 30-50% redundant data',
       'Toxicity filtering for safe model behavior',
       'Quality scoring to prioritize high-value data',
-      'Tokenization converts text to model-ready format',
+      'Each stage is a full read-write cycle through S3',
     ],
     s3Paths: [
-      's3://data-lake/cleaned/',
-      's3://data-lake/deduplicated/',
-      's3://data-lake/tokenized/shards/',
+      's3://lakehouse/bronze/raw-ingest/',
+      's3://lakehouse/silver/cleaned-deduped/',
+      's3://lakehouse/gold/tokenized-shards/',
     ],
     ioProfile: {
-      pattern: 'Read raw → Write processed',
-      volume: 'TB per stage',
+      pattern: 'Read raw → Write processed (per ELT stage)',
+      volume: 'TB per ELT stage',
       throughput: '20-100 GB/s',
       metric: 'Read + Write throughput',
     },
@@ -106,47 +107,52 @@ const nodes: NodeData[] = [
   },
   {
     id: 'minio-datalake',
-    name: 'MinIO AIStor Data Lake',
-    shortName: 'Data Lake',
+    name: 'MinIO AIStor Data Lakehouse',
+    shortName: 'Data Lakehouse',
     x: 50,
-    y: 420,
-    width: 220,
-    height: 140,
+    y: 550,
+    width: 230,
+    height: 240,
     type: 'storage',
     role: 'primary',
-    description: 'S3-compatible object storage - the foundation of your AI data infrastructure',
+    description: 'S3 Tables (Iceberg/Delta) on MinIO AIStor — born-clean Lakehouse with ACID, schema enforcement, and Medallion architecture',
     details: [
-      'Training-ready shards stored as immutable objects',
+      'NOT a data swamp — schema-on-write from day 1',
+      'S3 Tables: native Iceberg/Delta/Hudi support',
+      'ACID transactions, time travel, partition pruning',
+      'Medallion: Bronze (raw) → Silver (cleaned) → Gold (tokenized)',
       'Erasure coding (Reed-Solomon) for durability',
-      'Versioning for reproducibility',
-      'Lifecycle policies for cost optimization',
+      'Versioning for full reproducibility',
     ],
     s3Paths: [
-      's3://training-data/tokenized/shard-{00000..99999}.tar',
-      's3://training-data/metadata/manifest.json',
+      's3://lakehouse/bronze/raw-ingest/{date}/',
+      's3://lakehouse/silver/deduped-filtered/',
+      's3://lakehouse/gold/tokenized/shard-{00000..99999}.tar',
+      's3://lakehouse/gold/metadata/manifest.json',
     ],
     ioProfile: {
-      pattern: 'Sequential bulk storage',
+      pattern: 'Sequential bulk storage + columnar reads',
       volume: 'Petabytes total',
       throughput: '325 GiB/s GET capacity',
       metric: 'Aggregate throughput',
     },
-    minioFeature: 'Inline erasure coding written in assembly - survives loss of up to 50% of drives',
+    minioFeature: 'MinIO S3 Tables provides native Iceberg support — born-clean Lakehouse with zero-copy Delta Sharing to Databricks',
     dataVolume: 'PB',
     phase: 1,
   },
   {
     id: 'data-loader',
-    name: 'Data Loader',
+    name: 'PyTorch DataLoader',
     shortName: 'DataLoader',
-    x: 390,
-    y: 240,
-    width: 220,
-    height: 130,
+    x: 430,
+    y: 370,
+    width: 230,
+    height: 140,
     type: 'process',
     role: 'buffered',
-    description: 'PyTorch DataLoader, Mosaic StreamingDataset, or NVIDIA DALI',
+    description: 'PyTorch DataLoader, Mosaic StreamingDataset, or NVIDIA DALI — streaming Gold-tier shards to GPUs',
     details: [
+      'Reads Gold-tier tokenized shards from Lakehouse',
       'Prefetch buffers hide storage latency',
       'Multi-worker parallel data loading',
       'On-the-fly augmentation and transforms',
@@ -154,7 +160,7 @@ const nodes: NodeData[] = [
     ],
     s3Paths: [
       '# PyTorch DataLoader with S3',
-      'StreamingDataset(remote="s3://training-data/shards/")',
+      'StreamingDataset(remote="s3://lakehouse/gold/shards/")',
     ],
     ioProfile: {
       pattern: 'Sequential reads with prefetch',
@@ -162,7 +168,7 @@ const nodes: NodeData[] = [
       throughput: '10-100 GB/s sustained',
       metric: 'Read throughput (GB/s)',
     },
-    minioFeature: 'MinIO Cache uses distributed DRAM to ensure GPUs are never starved - eliminates I/O bottlenecks',
+    minioFeature: 'MinIO Cache uses distributed DRAM to ensure GPUs are never starved — eliminates I/O bottlenecks',
     dataVolume: 'GB/s',
     phase: 2,
   },
@@ -170,13 +176,13 @@ const nodes: NodeData[] = [
     id: 'gpu-cluster',
     name: 'GPU Cluster',
     shortName: 'GPUs',
-    x: 730,
-    y: 170,
-    width: 230,
-    height: 200,
+    x: 800,
+    y: 270,
+    width: 240,
+    height: 220,
     type: 'compute',
     role: 'not-in-path',
-    description: 'Forward pass, backward pass, gradient computation - pure GPU compute',
+    description: 'Forward pass, backward pass, gradient computation — pure GPU compute. Storage is NOT in this loop.',
     details: [
       'Model weights loaded into VRAM',
       'Forward pass: input → activations → loss',
@@ -202,13 +208,13 @@ const nodes: NodeData[] = [
     id: 'checkpoint-store',
     name: 'Checkpoint Store',
     shortName: 'Checkpoints',
-    x: 1090,
+    x: 1180,
     y: 30,
-    width: 230,
-    height: 130,
+    width: 240,
+    height: 140,
     type: 'storage',
     role: 'primary',
-    description: 'Full model state dumped every N steps for disaster recovery',
+    description: 'Full model state dumped every N steps for disaster recovery — 500 GB to 1 TB per checkpoint (70B model)',
     details: [
       '70B model + Adam optimizer = 500GB-1TB per checkpoint',
       'Bursty writes every N training steps',
@@ -226,21 +232,21 @@ const nodes: NodeData[] = [
       throughput: 'Peak 50-100 GB/s',
       metric: 'Write throughput, durability',
     },
-    minioFeature: 'BitRot protection with HighwayHash verifies every byte - over 10 GB/s per core',
+    minioFeature: 'BitRot protection with HighwayHash verifies every byte — over 10 GB/s per core',
     dataVolume: 'TB',
     phase: 4,
   },
   {
     id: 'experiment-tracking',
     name: 'Experiment Tracking',
-    shortName: 'MLflow/W&B',
-    x: 1090,
-    y: 230,
-    width: 230,
-    height: 130,
+    shortName: 'MLflow / W&B',
+    x: 1180,
+    y: 290,
+    width: 240,
+    height: 140,
     type: 'storage',
     role: 'primary',
-    description: 'MLflow, Weights & Biases - metrics, hyperparameters, artifacts',
+    description: 'MLflow, Weights & Biases — metrics, hyperparameters, artifacts logged every training step',
     details: [
       'Every training run is an experiment',
       'Hyperparameters, metrics, configs stored',
@@ -258,7 +264,7 @@ const nodes: NodeData[] = [
       throughput: 'Low but consistent',
       metric: 'Availability, versioning',
     },
-    minioFeature: 'MinIO Catalog provides GraphQL search across billions of artifacts - find any experiment instantly',
+    minioFeature: 'MinIO Catalog provides GraphQL search across billions of artifacts — find any experiment instantly',
     dataVolume: 'GB',
     phase: 4,
   },
@@ -266,13 +272,13 @@ const nodes: NodeData[] = [
     id: 'model-registry',
     name: 'Model Registry',
     shortName: 'Registry',
-    x: 1090,
-    y: 430,
-    width: 230,
-    height: 130,
+    x: 1180,
+    y: 550,
+    width: 240,
+    height: 140,
     type: 'storage',
     role: 'primary',
-    description: 'Final trained model exported and versioned for downstream consumption',
+    description: 'Final trained model exported and versioned for downstream consumption — safetensors, GGUF, ONNX',
     details: [
       'Export formats: safetensors, GGUF, ONNX',
       'Semantic versioning (v1.0, v1.1, v2.0)',
@@ -290,7 +296,7 @@ const nodes: NodeData[] = [
       throughput: 'One-time export',
       metric: 'Durability, versioning',
     },
-    minioFeature: 'Object locking ensures model artifacts are immutable - WORM compliance for regulated industries',
+    minioFeature: 'Object locking ensures model artifacts are immutable — WORM compliance for regulated industries',
     dataVolume: 'GB',
     phase: 5,
   },
@@ -301,7 +307,7 @@ const flowPaths: FlowPath[] = [
     id: 'raw-to-pipeline',
     from: 'raw-data',
     to: 'data-pipeline',
-    label: 'PB scale',
+    label: 'PB scale ingest',
     dataVolume: 'massive',
     direction: 'down',
     animated: true,
@@ -311,21 +317,21 @@ const flowPaths: FlowPath[] = [
     id: 'pipeline-to-lake',
     from: 'data-pipeline',
     to: 'minio-datalake',
-    label: 'Cleaned shards',
+    label: 'Bronze / Silver / Gold',
     dataVolume: 'massive',
     direction: 'down',
     animated: true,
-    description: 'Processed data stored in data lake',
+    description: 'ELT stages land as Medallion layers in Lakehouse',
   },
   {
     id: 'lake-to-loader',
     from: 'minio-datalake',
     to: 'data-loader',
-    label: 'Stream GB/s',
+    label: 'Gold shards',
     dataVolume: 'heavy',
     direction: 'right',
     animated: true,
-    description: 'Data loader streams batches from storage',
+    description: 'DataLoader streams Gold-tier tokenized shards from Lakehouse',
   },
   {
     id: 'loader-to-gpu',
@@ -380,7 +386,7 @@ const flowPaths: FlowPath[] = [
 ]
 
 const phases = [
-  { id: 1, name: 'Data Ingestion', description: 'Raw data lands in object storage' },
+  { id: 1, name: 'Data Ingestion', description: 'Raw data lands in the Lakehouse via ELT' },
   { id: 2, name: 'Data Loading', description: 'Streaming batches to GPU memory' },
   { id: 3, name: 'GPU Compute', description: 'Forward/backward pass (no storage)' },
   { id: 4, name: 'Checkpointing', description: 'Saving state for disaster recovery' },
@@ -614,8 +620,8 @@ export default function InteractiveTrainingExplorer() {
       </div>
 
       {/* Main Diagram */}
-      <div className="relative p-6 overflow-x-auto" style={{ minHeight: '660px' }}>
-        <svg viewBox="0 0 1380 640" className="w-full min-w-[1100px]">
+      <div className="relative p-6 overflow-x-auto" style={{ minHeight: '880px' }}>
+        <svg viewBox="0 0 1480 860" className="w-full min-w-[1100px]">
           <defs>
             {/* Gradients */}
             <linearGradient id="storageGrad" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -876,6 +882,24 @@ export default function InteractiveTrainingExplorer() {
                   </div>
                 </foreignObject>
                 
+                {/* Medallion sub-labels for the Data Lakehouse node */}
+                {node.id === 'minio-datalake' && (
+                  <g>
+                    {/* Bronze tier */}
+                    <rect x={node.x + 10} y={node.y + 100} width={node.width - 20} height={28} rx="6" fill="#92400E" opacity={0.5} />
+                    <text x={node.x + 20} y={node.y + 118} fill="#FCD34D" fontSize="10" fontWeight="600">Bronze</text>
+                    <text x={node.x + 70} y={node.y + 118} fill="#D4A050" fontSize="9">Raw ingest, unvalidated</text>
+                    {/* Silver tier */}
+                    <rect x={node.x + 10} y={node.y + 134} width={node.width - 20} height={28} rx="6" fill="#374151" opacity={0.5} />
+                    <text x={node.x + 20} y={node.y + 152} fill="#D1D5DB" fontSize="10" fontWeight="600">Silver</text>
+                    <text x={node.x + 65} y={node.y + 152} fill="#9CA3AF" fontSize="9">Cleaned, deduped, filtered</text>
+                    {/* Gold tier */}
+                    <rect x={node.x + 10} y={node.y + 168} width={node.width - 20} height={28} rx="6" fill="#78350F" opacity={0.5} />
+                    <text x={node.x + 20} y={node.y + 186} fill="#FCD34D" fontSize="10" fontWeight="600">Gold</text>
+                    <text x={node.x + 58} y={node.y + 186} fill="#D4A050" fontSize="9">Tokenized, sharded, ready</text>
+                  </g>
+                )}
+                
                 {/* Click indicator */}
                 {isHovered && (
                   <g>
@@ -906,8 +930,8 @@ export default function InteractiveTrainingExplorer() {
 
           {/* Current Phase Indicator */}
           <text
-            x="690"
-            y="625"
+            x="740"
+            y="845"
             textAnchor="middle"
             fill="#9CA3AF"
             fontSize="12"
