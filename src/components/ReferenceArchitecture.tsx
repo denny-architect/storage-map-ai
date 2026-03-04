@@ -208,8 +208,13 @@ const TIERS = [
 // THE STORAGE DINOSAUR TRANSLATION
 // This is the key insight for your audience
 const DINOSAUR_TRANSLATION = {
-  title: 'For Storage Veterans: The GPU/DPU is NOT like iSCSI/TOE',
+  title: 'For Storage Veterans: From Block & Fabric to Objects & Tensors',
   explanation: `
+Tensors: the multi-dimensional arrays (think: matrices of matrices)
+that hold model weights, activations, and gradients in GPU memory.
+They're the fundamental data unit of AI — what blocks are to SAN,
+tensors are to GPU compute.
+
 Your instinct: "GPU talks to storage like iSCSI initiator talks to target."
 Reality: GPU doesn't "talk to storage" during training at all.
 
@@ -260,7 +265,7 @@ export default function ReferenceArchitecture() {
               AI Training Reference Architecture
             </h2>
             <p className="text-raspberry-light mt-1">
-              Prescriptive. META-inspired. MinIO-powered.
+              Prescriptive. One stack. Clear tiers.
             </p>
           </div>
           <button

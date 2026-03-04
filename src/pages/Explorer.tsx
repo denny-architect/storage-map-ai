@@ -53,7 +53,7 @@ export default function Explorer() {
     <div>
       <PageHeader
         title="AI Training Reference Architecture"
-        subtitle="META-Inspired, MinIO-Powered"
+        subtitle="Prescriptive Guide"
         description="A prescriptive guide to AI storage. ONE stack, clear tiers, step-by-step pipeline. Built for storage veterans learning AI infrastructure."
       >
         {/* View Selector */}

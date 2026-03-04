@@ -111,23 +111,15 @@ export default function Home() {
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl">
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm mb-8 animate-fade-in">
-              <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
-              <span className="text-sm text-gray-300">Technical Reference for AI/ML Engineers</span>
-            </div>
-            
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-6 animate-slide-up" style={{ animationDelay: '0.1s' }}>
-              Everyone talks about{' '}
-              <span className="gradient-text">AI storage</span>.
-              <br />
-              <span className="text-gray-400">Almost nobody draws the lines correctly.</span>
+              The{' '}
+              <span className="gradient-text">AI Storage</span>{' '}
+              Map
             </h1>
             
             <p className="text-xl text-gray-400 mb-10 leading-relaxed max-w-3xl animate-slide-up" style={{ animationDelay: '0.2s', animationFillMode: 'both' }}>
-              This is a technical reference for where object storage actually lives in AI/ML pipelines — 
-              not where marketing slides put it. Every phase mapped. Every I/O pattern explained. 
-              <span className="text-white font-medium"> No hand-waving.</span>
+              A technical reference for where object storage actually lives in AI/ML pipelines.
+              Every phase mapped. Every I/O pattern explained.
             </p>
             
             <div className="flex flex-wrap gap-4 animate-slide-up" style={{ animationDelay: '0.3s', animationFillMode: 'both' }}>

@@ -9,7 +9,6 @@ const navLinks = [
   { path: '/fine-tuning', label: 'Fine-Tuning' },
   { path: '/inference', label: 'Inference' },
   { path: '/compare', label: 'Compare' },
-  { path: '/demo-stack', label: 'Demo Stack' },
   { path: '/paths', label: 'S3 Paths' },
   { path: '/glossary', label: 'Glossary' },
 ]
@@ -198,7 +197,6 @@ export default function Layout() {
               <ul className="space-y-3">
                 {[
                   { to: '/compare', label: 'Comparison Matrix' },
-                  { to: '/demo-stack', label: 'Demo Stack' },
                   { to: '/paths', label: 'S3 Path Reference' },
                   { to: '/glossary', label: 'Glossary' },
                 ].map((item) => (
@@ -254,7 +252,7 @@ export default function Layout() {
                 {' '}— the S3-compatible object store built for AI workloads.
               </p>
               <div className="flex items-center gap-4">
-                <span className="text-xs text-gray-600">Built for engineers who want accuracy over hand-waving.</span>
+                <span className="text-xs text-gray-600">Built for the team that has to actually build it.</span>
               </div>
             </div>
           </div>
