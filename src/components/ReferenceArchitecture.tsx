@@ -45,7 +45,7 @@ const PIPELINE_PHASES: PipelinePhase[] = [
     dataVolume: 'Petabytes',
     latencyReq: '5-15ms OK (batch)',
     minioRole: 'Data Lake Foundation',
-    metaComparison: 'META: Tectonic distributed FS. You: MinIO AIStor.',
+    metaComparison: 'META: Tectonic distributed FS. You: MinIO AIStor. Whitepaper: 165 GiB/s PUT (32-node), 2.5 TiB/s (300-server).',
   },
   {
     id: 'elt',
@@ -80,8 +80,8 @@ const PIPELINE_PHASES: PipelinePhase[] = [
     ioPattern: 'Sequential reads, prefetch, 325 GiB/s',
     dataVolume: 'Continuous stream',
     latencyReq: '1-5ms (throughput > latency)',
-    minioRole: 'Hot S3 Cache (in-cluster)',
-    metaComparison: 'META: 16 TB/s to 16K GPUs. You: 325 GiB/s per node.',
+    minioRole: 'Hot S3 Cache + MinIO Cache (DRAM)',
+    metaComparison: 'META: 16 TB/s to 16K GPUs. You: 325 GiB/s GET (32-node benchmark). Whitepaper: MinIO Cache prevents GPU starvation.',
   },
   {
     id: 'training',
@@ -104,8 +104,8 @@ const PIPELINE_PHASES: PipelinePhase[] = [
     ioPattern: 'Bursty large sequential writes',
     dataVolume: '500GB-1TB per checkpoint (70B model)',
     latencyReq: '5-15ms OK (periodic burst)',
-    minioRole: 'Durable checkpoint store',
-    metaComparison: 'META: Tectonic synchronized checkpoints. You: MinIO AIStor.',
+    minioRole: 'Durable checkpoint store (erasure coded)',
+    metaComparison: 'META: Tectonic synchronized checkpoints. You: MinIO AIStor with Reed-Solomon EC (whitepaper: 12-drive, 6-parity).',
   },
   {
     id: 'experiment',
@@ -152,8 +152,8 @@ const PIPELINE_PHASES: PipelinePhase[] = [
     ioPattern: 'Archive, ILM auto-tiered',
     dataVolume: 'Exabytes over time',
     latencyReq: '15-50ms OK',
-    minioRole: 'Object Lock, WORM, SEC 17a-4',
-    metaComparison: 'META: Compliance requirements. You: MinIO AIStor Object Lock.',
+    minioRole: 'Object Lock + WORM (SEC 17a-4(f))',
+    metaComparison: 'META: Compliance requirements. You: MinIO AIStor Object Lock (whitepaper: SEC 17a-4(f), FINRA 4511(c)).',
   },
 ]
 

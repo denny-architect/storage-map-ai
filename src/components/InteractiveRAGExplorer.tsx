@@ -67,7 +67,7 @@ const nodes: NodeData[] = [
       throughput: 'Varies (scheduled or triggered)',
       metric: 'Availability, durability',
     },
-    minioFeature: 'MinIO AIStor event notifications trigger ingestion pipelines automatically on new object upload',
+    minioFeature: 'Bucket notifications via Kafka/NATS/AMQP/MQTT/Webhooks auto-trigger ingestion (whitepaper: Lambda Notifications with 10+ target types)',
     phase: 1,
   },
   {
@@ -97,7 +97,7 @@ const nodes: NodeData[] = [
       throughput: 'Depends on corpus size',
       metric: 'Read + Write throughput',
     },
-    minioFeature: 'S3 Select enables server-side filtering to retrieve only matching chunks, reducing bandwidth by 80%+',
+    minioFeature: 'S3 Select with SIMD acceleration — server-side filtering on CSV/JSON/Parquet, 80%+ bandwidth reduction (whitepaper)',
     phase: 1,
   },
   {
@@ -128,7 +128,7 @@ const nodes: NodeData[] = [
       throughput: 'Sustained reads during embedding',
       metric: 'Aggregate throughput, durability',
     },
-    minioFeature: 'Inline erasure coding with Reed-Solomon ensures document durability — survives loss of up to 50% of drives',
+    minioFeature: 'Reed-Solomon erasure coding: 12-drive, 6-parity tolerates 5 failures (~50% drive loss). Whitepaper: per-object inline EC in assembly',
     phase: 1,
   },
   {
@@ -160,7 +160,7 @@ const nodes: NodeData[] = [
       throughput: 'Hours to days at scale',
       metric: 'Read throughput',
     },
-    minioFeature: 'MinIO Cache with distributed DRAM accelerates repeated reads during re-embedding cycles',
+    minioFeature: 'MinIO Cache: distributed shared DRAM cache accelerates hot reads (whitepaper: designed for ultra-high-performance AI workloads)',
     phase: 2,
   },
   {
@@ -192,7 +192,7 @@ const nodes: NodeData[] = [
       throughput: 'Periodic flushes',
       metric: 'Write throughput, durability',
     },
-    minioFeature: 'BitRot protection with HighwayHash verifies every byte of vector data at over 10 GB/s per core',
+    minioFeature: 'BitRot protection via HighwayHash at >10 GB/s/core with SIMD; inline healing repairs on read (whitepaper: silent corruption impossible)',
     phase: 2,
   },
   {
