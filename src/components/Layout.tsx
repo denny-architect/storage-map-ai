@@ -4,8 +4,7 @@ import { useState, useEffect } from 'react'
 const navLinks = [
   { path: '/', label: 'Overview' },
   { path: '/explorer', label: 'Explorer', highlight: true },
-  { path: '/training', label: 'Training' },
-  { path: '/rag', label: 'RAG' },
+
   { path: '/fine-tuning', label: 'Fine-Tuning' },
   { path: '/inference', label: 'Inference' },
   { path: '/compare', label: 'Compare' },
@@ -170,8 +169,8 @@ export default function Layout() {
               </h3>
               <ul className="space-y-3">
                 {[
-                  { to: '/training', label: 'Model Training' },
-                  { to: '/rag', label: 'RAG Pipelines' },
+                  { to: '/explorer', label: 'Model Training' },
+                  { to: '/explorer', label: 'RAG Pipelines' },
                   { to: '/fine-tuning', label: 'Fine-Tuning (LoRA)' },
                   { to: '/inference', label: 'Inference' },
                 ].map((item) => (

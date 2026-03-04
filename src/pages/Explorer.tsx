@@ -1,6 +1,7 @@
 import { useState } from 'react'
-import { PageHeader } from '../components/PipelineDiagram'
+import { PageHeader, BottomLine } from '../components/PipelineDiagram'
 import InteractiveTrainingExplorer from '../components/InteractiveTrainingExplorer'
+import InteractiveRAGExplorer from '../components/InteractiveRAGExplorer'
 import StorageLayoutExplorer from '../components/StorageLayoutExplorer'
 import ReferenceArchitecture from '../components/ReferenceArchitecture'
 
@@ -33,7 +34,7 @@ export default function Explorer() {
       id: 'rag', 
       name: 'RAG Pipeline', 
       description: 'Retrieval-augmented generation',
-      available: false,
+      available: true,
     },
     { 
       id: 'fine-tuning', 
@@ -95,9 +96,146 @@ export default function Explorer() {
         <section className="mb-12">
           {activeView === 'reference' && <ReferenceArchitecture />}
           {activeView === 'storage-layout' && <StorageLayoutExplorer />}
-          {activeView === 'training' && <InteractiveTrainingExplorer />}
           
-          {(activeView === 'rag' || activeView === 'fine-tuning' || activeView === 'inference') && (
+          {activeView === 'training' && (
+            <>
+              <InteractiveTrainingExplorer />
+
+              {/* Key Technical Insights — migrated from Training tab */}
+              <section className="mt-12 mb-12">
+                <h2 className="text-2xl font-bold text-gray-900 mb-6">Key Technical Insights</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="bg-white rounded-xl border border-gray-200 p-6">
+                    <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                      <span className="w-8 h-8 bg-raspberry/10 rounded-lg flex items-center justify-center">
+                        <svg className="w-5 h-5 text-raspberry" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                      </span>
+                      Throughput Over Latency
+                    </h3>
+                    <p className="text-gray-600">
+                      Training storage is throughput-bound, not latency-bound. DataLoaders need sustained GB/s reads. 
+                      Checkpoints need burst GB/s writes. ELT jobs read and write entire tables. 
+                      The metric is aggregate throughput (GB/s), not random IOPS. Size your storage accordingly.
+                    </p>
+                  </div>
+
+                  <div className="bg-white rounded-xl border border-gray-200 p-6">
+                    <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                      <span className="w-8 h-8 bg-raspberry/10 rounded-lg flex items-center justify-center">
+                        <svg className="w-5 h-5 text-raspberry" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      </span>
+                      Storage Speed = GPU Dollars
+                    </h3>
+                    <p className="text-gray-600">
+                      When DataLoader throughput drops below GPU consumption rate, GPUs idle waiting for data. 
+                      When synchronous checkpoints pause training, every GPU in the cluster burns money doing nothing. 
+                      On a 1,000-GPU cluster at $2-3/hr per GPU, each minute of storage-induced idle time costs $30-50. 
+                      Faster storage directly reduces training cost.
+                    </p>
+                  </div>
+
+                  <div className="bg-white rounded-xl border border-gray-200 p-6">
+                    <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                      <span className="w-8 h-8 bg-raspberry/10 rounded-lg flex items-center justify-center">
+                        <svg className="w-5 h-5 text-raspberry" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                        </svg>
+                      </span>
+                      Medallion Architecture
+                    </h3>
+                    <p className="text-gray-600">
+                      Bronze (raw) → Silver (cleaned, deduplicated) → Gold (tokenized, sharded). Each layer lives in 
+                      object storage with Iceberg table format providing ACID transactions, schema evolution, and time travel. 
+                      Every transformation is a full read-write cycle through storage. This is where the petabytes get processed.
+                    </p>
+                  </div>
+
+                  <div className="bg-white rounded-xl border border-gray-200 p-6">
+                    <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                      <span className="w-8 h-8 bg-raspberry/10 rounded-lg flex items-center justify-center">
+                        <svg className="w-5 h-5 text-raspberry" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                        </svg>
+                      </span>
+                      Disaster Recovery
+                    </h3>
+                    <p className="text-gray-600">
+                      Checkpoints are your insurance policy. GPU node failure, network partition, software crash — 
+                      the ability to resume from the last checkpoint is why durable object storage is non-negotiable. 
+                      A failed checkpoint during a multi-week training run means restarting from the last good save — 
+                      potentially losing days of GPU compute.
+                    </p>
+                  </div>
+                </div>
+              </section>
+
+              {/* I/O Profile Summary — migrated from Training tab */}
+              <section className="mb-12">
+                <h2 className="text-2xl font-bold text-gray-900 mb-6">I/O Profile Summary</h2>
+                <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Operation</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pattern</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Volume</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Priority Metric</th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                      <tr>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Data Ingestion</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Sequential writes</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Petabytes</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Write throughput</td>
+                      </tr>
+                      <tr>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">ELT / Medallion</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Batch read-write cycles</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">TB-scale per job</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">R/W throughput, ACID (Iceberg)</td>
+                      </tr>
+                      <tr>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">DataLoader Streaming</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Sequential reads w/ prefetch</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Continuous (325 GiB/s target)</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Read throughput (GB/s)</td>
+                      </tr>
+                      <tr>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Checkpointing</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Bursty large writes (sync pause)</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">500GB-1TB per checkpoint</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Write throughput, durability</td>
+                      </tr>
+                      <tr>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Artifact Logging</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Continuous small writes</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Gigabytes</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Availability, versioning</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+
+              <BottomLine>
+                Object storage is in the critical path for every phase of training except the GPU compute loop itself. 
+                It's the data lake foundation (Bronze → Silver → Gold), the DataLoader source that must sustain 
+                325 GiB/s per node to keep GPUs fed, the checkpoint store where 500GB-1TB writes pause the entire 
+                cluster, and the artifact registry for experiment tracking and model export. Storage throughput 
+                directly impacts GPU utilization and training cost. The GPU training loop runs in VRAM — but 
+                everything that feeds it, saves it, and records it runs through object storage.
+              </BottomLine>
+            </>
+          )}
+
+          {activeView === 'rag' && <InteractiveRAGExplorer />}
+
+          {(activeView === 'fine-tuning' || activeView === 'inference') && (
             <div className="bg-gray-100 rounded-2xl p-12 text-center">
               <div className="w-16 h-16 rounded-full bg-gray-200 mx-auto mb-4 flex items-center justify-center">
                 <svg className="w-8 h-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
